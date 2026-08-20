@@ -1,0 +1,177 @@
+{
+  "app_name": "DealLakay Alert",
+  "personality": "1 iOS-Native Clean (Adapted for low-end Android)",
+  "personality_one_liner": "A fast, lightweight, and professional utility that bridges the gap between customer needs and local service providers in Haiti.",
+  "color": {
+    "surface": "#FFFFFF",
+    "onSurface": "#1A2024",
+    "surfaceSecondary": "#F4F6F8",
+    "onSurfaceSecondary": "#465159",
+    "surfaceTertiary": "#EAECEF",
+    "onSurfaceTertiary": "#2E363C",
+    "surfaceInverse": "#1A2024",
+    "onSurfaceInverse": "#FFFFFF",
+    "brand": "#107C55",
+    "brandPrimary": "#107C55",
+    "onBrandPrimary": "#FFFFFF",
+    "brandSecondary": "#0E5B3F",
+    "onBrandSecondary": "#FFFFFF",
+    "brandTertiary": "#E7F6F0",
+    "onBrandTertiary": "#0E5B3F",
+    "success": "#198754",
+    "onSuccess": "#FFFFFF",
+    "warning": "#D98E04",
+    "onWarning": "#FFFFFF",
+    "error": "#DC3545",
+    "onError": "#FFFFFF",
+    "info": "#465159",
+    "onInfo": "#FFFFFF",
+    "border": "#EAECEF",
+    "borderStrong": "#C1C7CD",
+    "divider": "#F4F6F8"
+  },
+  "typography": {
+    "displayFontFamily": "Plus Jakarta Sans",
+    "textFontFamily": "Plus Jakarta Sans",
+    "scale": {
+      "sm": 12,
+      "base": 14,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 24
+    }
+  },
+  "spacing": {
+    "rule": "Generous vertical breathing room for readability, but compact lists to minimize scrolling. Always account for Safe Areas.",
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 48
+  },
+  "radius_tokens": {
+    "sm": 6,
+    "md": 12,
+    "lg": 20,
+    "pill": 999
+  },
+  "shadow_tier": "1",
+  "navigation": "bottom_tabs",
+  "icon_set": "Feather",
+  "glassmorphism": {
+    "enabled": "false",
+    "do's": [
+      "Use solid surfaceSecondary with slight elevation for sticky headers and bottom tabs to ensure performance on low-end Android."
+    ],
+    "dont's": [
+      "Do not use expo-blur or heavy glassmorphism on this app, as the brief explicitly requires optimization for low-end Android."
+    ]
+  },
+  "platform_libraries": {
+    "glass": {
+      "ios": "solid surfaceSecondary",
+      "android": "solid surfaceSecondary",
+      "low_end_android_fallback": "solid surfaceSecondary"
+    },
+    "image": "expo-image",
+    "blur": "solid surfaceSecondary",
+    "bottom_sheet": "@gorhom/bottom-sheet",
+    "animation": "react-native-reanimated",
+    "gesture": "react-native-gesture-handler"
+  },
+  "screens": [
+    {
+      "name": "Auth",
+      "purpose": "Login, Register, and Forgot Password flows with high contrast forms.",
+      "states": {
+        "loading": "Centered spinner on screen",
+        "empty": "N/A",
+        "error": "Standard inline form errors or full-width error banner"
+      },
+      "layout": "Centered logo at the top. Single column form (Email/Phone, Password). Large sticky primary CTA at bottom. No heavy background images to keep loading fast."
+    },
+    {
+      "name": "Home Dashboard",
+      "purpose": "Central hub for the user to make a demand and see active responses.",
+      "states": {
+        "loading": "Skeleton loaders for demands list",
+        "empty": "Illustration for 'No Active Demands' with a 'Create Demand' button",
+        "error": "Error message with 'Retry' CTA"
+      },
+      "layout": "Scrollable View. Top: Welcome user. Hero Section: A brandTertiary tinted card with 'Kisa ou bezwen?' text and a prominent primary '+ Fè yon Demand' CTA. Below: Horizontal scroll or compact list of 'Active Demands'. Next: 'Recent Responses' (Vandè ki reponn). Bottom: Alert summary."
+    },
+    {
+      "name": "Create Demand",
+      "purpose": "Multi-field form for users to detail their service/product needs.",
+      "states": {
+        "loading": "Spinner over submit button",
+        "empty": "N/A",
+        "error": "Red inline validation text and error border on missing fields"
+      },
+      "layout": "Single column scrollable form. Labels above inputs. Fields: Title, Category, Description, Photo upload area (dashed border), Quantity, Min/Max Budget (HTG), Location, Urgency. Sticky footer at bottom with safe-area padding holding '🔔 Aktive Demand' CTA."
+    },
+    {
+      "name": "My Demands",
+      "purpose": "List of user's past and current requests.",
+      "states": {
+        "loading": "List of skeleton cards",
+        "empty": "Icon + 'Ou poko gen demand' + primary CTA",
+        "error": "Error text + retry button"
+      },
+      "layout": "Top sticky custom segmented control for tabs (Active, Responses, Completed, Expired). Below: Vertical list of demand cards. Each card has title, date, budget, and a status chip (brandTertiary bg, brandPrimary text for ACTIVE)."
+    },
+    {
+      "name": "Demand Details",
+      "purpose": "Deep dive into a specific demand and see matched providers.",
+      "states": {
+        "loading": "Skeleton UI covering details and provider list",
+        "empty": "In the Responders section: 'Nou ap chèche moun ki ka ede w...'",
+        "error": "Full screen error with back button"
+      },
+      "layout": "Scrollable. Top: Demand metadata (Title, Photo, Budget HTG, Location). Middle: 'Vandè/Teknisyen ki reponn' section holding a list of provider cards. Each provider card shows rating, distance, price, and 'Contact/Accept' CTA."
+    },
+    {
+      "name": "Alert Center",
+      "purpose": "Notification feed for matches and system updates.",
+      "states": {
+        "loading": "Skeleton list",
+        "empty": "Bell icon + 'Ou pa gen okenn alèt' (No alerts)",
+        "error": "Error state with retry"
+      },
+      "layout": "Simple vertical list of notifications. Unread items have a brandPrimary dot indicator or subtle brandTertiary background. Titles are bold, descriptions are truncated to 2 lines."
+    },
+    {
+      "name": "Profile",
+      "purpose": "User management and app settings.",
+      "states": {
+        "loading": "Skeleton for user info",
+        "empty": "N/A",
+        "error": "N/A"
+      },
+      "layout": "Top: Avatar and Name. Below: Grouped settings list using iOS-style inset grouped rows (Notifications, Language, Privacy, Logout). Logout is colored with error red."
+    }
+  ],
+  "images": {
+    "home_hero_bg": {
+      "url": "https://images.unsplash.com/photo-1696362468016-3a16db96e451?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzF8MHwxfHNlYXJjaHwxfHxoYWl0aSUyMHRyb3BpY2FsJTIwbmF0dXJlJTIwbWluaW1hbCUyMGJhY2tncm91bmR8ZW58MHx8fHwxNzg3MjUxMDQyfDA&ixlib=rb-4.1.0&q=85",
+      "alt": "Tropical nature minimal background for hero section"
+    },
+    "empty_state_illustration": {
+      "url": "https://images.unsplash.com/photo-1685871286419-58e4fc0de8e1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NzV8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMG1pbmltYWwlMjBncmVlbiUyMGdlb21ldHJ5fGVufDB8fHx8MTc4NzI1MTA0Mnww&ixlib=rb-4.1.0&q=85",
+      "alt": "Abstract minimal green geometry for empty states"
+    }
+  },
+  "instructions_to_main_agent": [
+    "Strictly adhere to the '1 iOS-Native Clean' personality guidelines. Do not drift into Material Design styles or heavy shadows.",
+    "BANNED COLORS STRICTLY ENFORCED: No Blues, Indigo, Violet, Purple, Orange, Terracotta. We are using Deep Emerald Green (#107C55) as the primary brand color. Info/Neutral is dark slate/grey, not blue.",
+    "LOW-END ANDROID OPTIMIZATION: Do not use expo-blur. Keep all glassmorphism settings disabled. Use solid 'surfaceSecondary' for sticky headers, bottom tabs, and floating components to ensure high performance.",
+    "Use 'Plus Jakarta Sans' for all typography. Respect the maximum font weight of 500 (no Bold/ExtraBold cuts). Use size and color for hierarchy.",
+    "IMPLEMENT A STICKY CTA for the 'Create Demand' screen. Ensure the '🔔 Aktive Demand' button is anchored to the bottom using KeyboardAvoidingView and Safe Area padding.",
+    "For the Haiti context, ensure all budget inputs and displays explicitly use HTG (Gourdes) and format numbers clearly.",
+    "Ensure the 'Responders' section in 'Demand Details' has a clear visual separation from the demand's own info, utilizing 'surfaceSecondary' cards to present vendors.",
+    "Every icon used must be from the 'Feather' set. Ensure all icons share a consistent 20px or 24px size and stroke weight.",
+    "Never render text directly over an image without a gradient scrim. If applying the 'home_hero_bg', ensure a top-to-bottom transparent-to-surfaceInverse gradient is overlaid so text is readable."
+  ]
+}
