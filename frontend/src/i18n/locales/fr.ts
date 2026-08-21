@@ -8,6 +8,7 @@ type DeepPartial<T> = { [K in keyof T]?: DeepPartial<T[K]> };
  */
 const fr: DeepPartial<Dictionary> = {
   common: {
+    tagline: "Besoin de quelque chose ? ALERTE-le.",
     cancel: "Annuler",
     save: "Enregistrer",
     retry: "Réessayer",
