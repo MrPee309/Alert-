@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { LogBox } from "react-native";
 
 import { useIconFonts } from "@/src/hooks/use-icon-fonts";
+import { I18nProvider } from "@/src/i18n";
 
 
 // Disable logbox errors etc so that users can see the app
@@ -29,5 +30,9 @@ export default function RootLayout() {
   // the app — icons will tofu, but the app still boots.
   if (!loaded && !error) return null;
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <I18nProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </I18nProvider>
+  );
 }
