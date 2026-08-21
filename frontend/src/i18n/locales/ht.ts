@@ -5,6 +5,7 @@
 const ht = {
   common: {
     appName: "DealLakay Alert",
+    tagline: "Bezwen yon bagay? ALÈT li.",
     cancel: "Anile",
     save: "Anrejistre",
     retry: "Eseye ankò",
