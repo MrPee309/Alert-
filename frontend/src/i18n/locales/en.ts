@@ -4,6 +4,7 @@ import type { Dictionary } from "./ht";
 const en: Dictionary = {
   common: {
     appName: "DealLakay Alert",
+    tagline: "Need something? ALERT it.",
     cancel: "Cancel",
     save: "Save",
     retry: "Retry",
