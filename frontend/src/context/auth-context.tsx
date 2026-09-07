@@ -14,8 +14,9 @@ import React, {
 } from "react";
 
 import { storage } from "@/src/utils/storage";
-import { AUTH_TOKEN_KEY } from "@/src/api/client";
+import { AUTH_TOKEN_KEY, ApiError } from "@/src/api/client";
 import { authService } from "@/src/services/auth-service";
+import { authApi } from "@/src/api/auth";
 import { registerForPush } from "@/src/services/push-service";
 import type {
   Credentials,
@@ -29,10 +30,21 @@ interface AuthContextValue {
   user: User | null;
   initializing: boolean;
   login: (creds: Credentials) => Promise<void>;
-  register: (input: RegisterInput) => Promise<void>;
+  loginWithGoogle: (idToken: string, department?: string, city?: string) => Promise<void>;
+  register: (input: RegisterInput) => Promise<{ message: string }>;
   forgotPassword: (email: string) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (patch: Partial<User>) => Promise<void>;
+}
+
+/** Thrown by loginWithGoogle when DealLakay needs department/city for a
+ * brand-new Google sign-up — the UI catches this specifically to show an
+ * inline location picker and retry. */
+export class GoogleNeedsLocationError extends Error {
+  constructor() {
+    super("Chwazi depatman ak vil ou pou fini enskripsyon an.");
+    this.name = "GoogleNeedsLocationError";
+  }
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -62,7 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await storage.setItem(USER_KEY, JSON.stringify(nextUser));
     setUser(nextUser);
     // Fire-and-forget push registration (safe no-op in Expo Go / web).
-    void registerForPush(nextUser.id);
+    void registerForPush();
   }, []);
 
   const login = useCallback(
@@ -73,12 +85,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [persistSession],
   );
 
-  const register = useCallback(
-    async (input: RegisterInput) => {
-      const session = await authService.register(input);
-      await persistSession(session.user, session.token);
+  const loginWithGoogle = useCallback(
+    async (idToken: string, department?: string, city?: string) => {
+      try {
+        const session = await authApi.googleLogin(idToken, department, city);
+        await persistSession(session.user, session.token);
+      } catch (e) {
+        if (e instanceof ApiError && e.status === 422) {
+          throw new GoogleNeedsLocationError();
+        }
+        throw e;
+      }
     },
     [persistSession],
+  );
+
+  const register = useCallback(
+    async (input: RegisterInput) => {
+      // No auto-login here: DealLakay requires email verification first.
+      // The caller shows the "check your email" message and routes to Login.
+      return authService.register(input);
+    },
+    [],
   );
 
   const forgotPassword = useCallback(async (email: string) => {
@@ -105,8 +133,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const value = useMemo(
-    () => ({ user, initializing, login, register, forgotPassword, logout, updateUser }),
-    [user, initializing, login, register, forgotPassword, logout, updateUser],
+    () => ({ user, initializing, login, loginWithGoogle, register, forgotPassword, logout, updateUser }),
+    [user, initializing, login, loginWithGoogle, register, forgotPassword, logout, updateUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

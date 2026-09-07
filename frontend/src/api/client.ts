@@ -28,6 +28,11 @@ async function getToken(): Promise<string | null> {
   return storage.secureGet<string | null>(AUTH_TOKEN_KEY, null);
 }
 
+/** Exposed for the Messenger's WebSocket connection (needs the raw token
+ * to authenticate the `wss://.../ws?token=...` handshake — see
+ * routers/social.py's websocket_endpoint). */
+export const getAuthToken = getToken;
+
 interface RequestOptions {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: unknown;

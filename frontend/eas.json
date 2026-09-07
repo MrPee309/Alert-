@@ -1,0 +1,15 @@
+{
+  "cli": { "version": ">= 5.0.0", "appVersionSource": "local" },
+  "build": {
+    "preview": {
+      "android": { "buildType": "apk" },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://deallakay.onrender.com/api",
+        "EXPO_PUBLIC_BACKEND_URL": "https://alert-ra80.onrender.com",
+        "EXPO_PUBLIC_USE_MOCK": "false",
+        "EXPO_PUBLIC_GOOGLE_CLIENT_ID": "685875715767-br0t07qabbdj7qhk4jok463jd4701gtb.apps.googleusercontent.com",
+        "EXPO_PUBLIC_WEBSITE_URL": "https://deallakay.vercel.app"
+      }
+    }
+  }
+}

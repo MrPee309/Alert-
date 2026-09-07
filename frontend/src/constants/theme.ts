@@ -1,39 +1,39 @@
 /**
  * DealLakay Alert — design tokens.
- * Source: /app/design_guidelines.json ("iOS-Native Clean" personality).
- * Emerald brand, solid surfaces (optimized for low-end Android), Plus Jakarta Sans.
+ * Purple/violet brand palette, matching the "DealLakay Deal Alerts" visual
+ * reference (rounded cards, gradient-friendly brand purple, pill buttons).
  */
 
 export const colors = {
   surface: "#FFFFFF",
-  onSurface: "#1A2024",
-  surfaceSecondary: "#F4F6F8",
-  onSurfaceSecondary: "#465159",
-  surfaceTertiary: "#EAECEF",
-  onSurfaceTertiary: "#2E363C",
-  surfaceInverse: "#1A2024",
+  onSurface: "#1A1A2E",
+  surfaceSecondary: "#F5F3FF",
+  onSurfaceSecondary: "#5B5876",
+  surfaceTertiary: "#EDE9FE",
+  onSurfaceTertiary: "#7C7A94",
+  surfaceInverse: "#1E1B3A",
   onSurfaceInverse: "#FFFFFF",
 
-  brand: "#107C55",
-  brandPrimary: "#107C55",
+  brand: "#7C3AED",
+  brandPrimary: "#7C3AED",
   onBrandPrimary: "#FFFFFF",
-  brandSecondary: "#0E5B3F",
+  brandSecondary: "#5B21B6",
   onBrandSecondary: "#FFFFFF",
-  brandTertiary: "#E7F6F0",
-  onBrandTertiary: "#0E5B3F",
+  brandTertiary: "#EDE9FE",
+  onBrandTertiary: "#5B21B6",
 
-  success: "#198754",
+  success: "#16A34A",
   onSuccess: "#FFFFFF",
   warning: "#D98E04",
   onWarning: "#FFFFFF",
-  error: "#DC3545",
+  error: "#DC2626",
   onError: "#FFFFFF",
-  info: "#465159",
+  info: "#5B5876",
   onInfo: "#FFFFFF",
 
-  border: "#EAECEF",
-  borderStrong: "#C1C7CD",
-  divider: "#F4F6F8",
+  border: "#E9E5FB",
+  borderStrong: "#C4BEE8",
+  divider: "#F5F3FF",
 } as const;
 
 export const spacing = {

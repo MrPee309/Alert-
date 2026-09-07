@@ -6,8 +6,16 @@
 /** Base URL of the real DealLakay marketplace API. Empty until provided. */
 export const DEALLAKAY_API_URL = (process.env.EXPO_PUBLIC_API_URL ?? "").trim();
 
+/** DealLakay website base URL — used to open product/request pages in-browser
+ * (e.g. "View Deal") since this app doesn't duplicate the marketplace UI. */
+export const WEBSITE_URL = (process.env.EXPO_PUBLIC_WEBSITE_URL ?? "").trim();
+
 /** Base URL of the companion backend (push relay). */
 export const BACKEND_URL = (process.env.EXPO_PUBLIC_BACKEND_URL ?? "").trim();
+
+/** Google OAuth Web Client ID — reuses DealLakay's existing Google Client ID
+ * (same value already configured for the DealLakay website). */
+export const GOOGLE_CLIENT_ID = (process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID ?? "").trim();
 
 /**
  * When true, the app uses the on-device mock service layer instead of the real

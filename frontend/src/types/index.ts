@@ -9,24 +9,11 @@
 
 // --- Enums / unions -------------------------------------------------------
 
-export type DemandStatus =
-  | "ACTIVE"
-  | "MATCHING"
-  | "RESPONSES"
-  | "COMPLETED"
-  | "CANCELLED"
-  | "EXPIRED";
-
 export type Urgency = "TODAY" | "THIS_WEEK" | "FLEXIBLE";
 
 export type ProviderType = "VENDOR" | "TECHNICIAN";
 
-export type NotificationType =
-  | "MATCH"
-  | "RESPONSE"
-  | "UPDATE"
-  | "EXPIRATION"
-  | "SYSTEM";
+export type NotificationType = string; // DealLakay has many notification types (offer, deal_alert, supplier_inquiry, etc.) — kept open rather than a fixed union.
 
 export type Language = "ht" | "fr" | "en";
 
@@ -56,6 +43,9 @@ export interface User {
   country: string;
   location: string;
   avatarUri?: string | null;
+  emailVerified: boolean;
+  isSeller: boolean;
+  isTechnician: boolean;
 }
 
 // --- Providers (vendors / technicians) ------------------------------------
@@ -74,38 +64,32 @@ export type Technician = Vendor;
 
 // --- Demands --------------------------------------------------------------
 
+export type DemandStatus = "open" | "fulfilled" | "closed";
+
 export interface Demand {
   id: string;
   userId: string;
+  username: string;
   title: string;
-  categoryId: string;
+  categoryId: string | null;
   description: string;
-  photoUri?: string | null;
-  quantity: number;
-  budgetMin: number | null;
-  budgetMax: number | null;
-  currency: string; // "HTG"
-  locationId: string;
-  urgency: Urgency;
-  alertDurationDays: number;
+  images: string[];
+  department: string;
+  city: string;
   status: DemandStatus;
   responsesCount: number;
   createdAt: string; // ISO
-  expiresAt: string; // ISO
 }
 
-/** Payload accepted by createDemand(). */
+/** Payload accepted by createDemand(). DealLakay's Request a Part does not
+ * support quantity/budget/urgency fields — only what's listed here. */
 export interface CreateDemandInput {
   title: string;
   categoryId: string;
   description: string;
-  photoUri?: string | null;
-  quantity: number;
-  budgetMin: number | null;
-  budgetMax: number | null;
-  locationId: string;
-  urgency: Urgency;
-  alertDurationDays: number;
+  department: string;
+  city: string;
+  images?: string[];
 }
 
 export interface DemandResponse {
@@ -128,6 +112,9 @@ export interface AppNotification {
   createdAt: string;
   read: boolean;
   demandId?: string | null;
+  /** Raw destination path from DealLakay (e.g. "/product/iphone-13", "/requests/abc") — use
+   * this instead of demandId for anything other than Request a Part deep links. */
+  link?: string;
 }
 
 // --- Auth -----------------------------------------------------------------
@@ -138,16 +125,22 @@ export interface AuthSession {
 }
 
 export interface Credentials {
-  email: string;
+  // DealLakay login accepts either a username OR an email in this field.
+  username: string;
   password: string;
 }
 
 export interface RegisterInput {
   fullName: string;
+  username: string;
   email: string;
   phone: string;
   password: string;
-  location: string;
+  confirmPassword: string;
+  country: string;
+  department: string;
+  city: string;
+  acceptTerms: boolean;
 }
 
 // --- Generic async UI state ----------------------------------------------
