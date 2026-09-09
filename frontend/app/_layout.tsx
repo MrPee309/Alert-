@@ -71,6 +71,8 @@ function RootNavigator() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Protected guard={!!user}>
         <Stack.Screen name="dashboard" />
+        <Stack.Screen name="become-driver" />
+        <Stack.Screen name="driver-dashboard" />
         <Stack.Screen name="create-alert" />
         <Stack.Screen name="alert-details" />
         <Stack.Screen name="my-alerts" />
