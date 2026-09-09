@@ -1,11 +1,18 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, Pressable, ActivityIndicator, ScrollView, Alert } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import * as Location from "expo-location";
 
 import { transportApi, type DriverProfile, type DriverStatus } from "@/src/api/transport";
 import { colors, spacing, radius, fontSize, font, shadow } from "@/src/constants/theme";
+
+// How often we send a location "heartbeat" while Available — a compromise
+// between battery/data usage and keeping nearby-search results fresh. The
+// backend independently treats anything older than 180s as stale, so this
+// interval leaves comfortable margin.
+const HEARTBEAT_INTERVAL_MS = 25000;
 
 const STATUS_META: Record<DriverProfile["verification_status"], { label: string; color: string; icon: keyof typeof Ionicons.glyphMap }> = {
   pending: { label: "An Atant Apwobasyon", color: colors.warning ?? "#D97706", icon: "time-outline" },
@@ -34,13 +41,54 @@ export default function DriverDashboardScreen() {
 
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
+  const heartbeatRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const stopHeartbeat = () => {
+    if (heartbeatRef.current) {
+      clearInterval(heartbeatRef.current);
+      heartbeatRef.current = null;
+    }
+  };
+  // Stop sending location the moment this screen unmounts — matches the
+  // spec's location-privacy rule (no tracking outside an active
+  // available/on-trip state, and never in the background beyond this
+  // foreground screen for Phase 2).
+  useEffect(() => stopHeartbeat, []);
+
+  const sendLocationOnce = async () => {
+    const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+    await transportApi.updateLocation(pos.coords.latitude, pos.coords.longitude);
+  };
+
+  const startHeartbeat = () => {
+    stopHeartbeat();
+    heartbeatRef.current = setInterval(() => { sendLocationOnce().catch(() => { /* one missed beat is fine — next one retries */ }); }, HEARTBEAT_INTERVAL_MS);
+  };
+
   const toggleAvailability = async () => {
     if (!profile) return;
-    const next: DriverStatus = profile.status === "available" ? "offline" : "available";
+    const goingAvailable = profile.status !== "available";
+
+    if (goingAvailable) {
+      const { status: permStatus } = await Location.requestForegroundPermissionsAsync();
+      if (permStatus !== "granted") {
+        Alert.alert(
+          "Lokalizasyon Nesesè",
+          "Nou bezwen lokalizasyon ou pou moun ka jwenn ou lè w disponib. Otorize aksè lokalizasyon nan Paramèt telefòn ou.",
+        );
+        return;
+      }
+    }
+
     setUpdating(true);
     try {
+      if (goingAvailable) {
+        await sendLocationOnce();
+      }
+      const next: DriverStatus = goingAvailable ? "available" : "offline";
       await transportApi.updateStatus(next);
       setProfile({ ...profile, status: next });
+      if (goingAvailable) startHeartbeat();
+      else stopHeartbeat();
     } catch (e: any) {
       Alert.alert("Erè", e?.message || "Nou pa t ka chanje estati ou.");
     } finally {
