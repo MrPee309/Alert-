@@ -58,6 +58,9 @@ export const transportApi = {
   updateStatus: (status: DriverStatus) =>
     apiClient.put<{ message: string; status: DriverStatus }>("/transport/drivers/status", { status }),
 
+  updateLocation: (lat: number, lng: number) =>
+    apiClient.put<{ message: string }>("/transport/drivers/location", { lat, lng }),
+
   listStations: (city?: string) =>
     apiClient.get<Station[]>(`/transport/stations${city ? `?city=${encodeURIComponent(city)}` : ""}`),
 };
