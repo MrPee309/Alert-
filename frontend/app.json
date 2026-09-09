@@ -10,7 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.emergent.alertmvp.dt882e"
+      "bundleIdentifier": "com.emergent.alertmvp.dt882e",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "DealLakay bezwen lokalizasyon ou pou moun ka jwenn ou lè w disponib kòm Chofè Moto."
+      }
     },
     "android": {
       "adaptiveIcon": {
