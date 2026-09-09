@@ -18,6 +18,7 @@ import { useAuth } from "@/src/context/auth-context";
 import { useUserRole } from "@/src/hooks/use-user-role";
 import { dealAlertsApi, type DealAlert } from "@/src/api/deal-alerts";
 import { alertsApi } from "@/src/api/alerts";
+import { transportApi } from "@/src/api/transport";
 import { WEBSITE_URL } from "@/src/constants/config";
 import type { AppNotification } from "@/src/types";
 import { colors, spacing, radius, fontSize, font, shadow } from "@/src/constants/theme";
@@ -49,6 +50,7 @@ export default function DashboardScreen() {
   const [responseCount, setResponseCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [isDriver, setIsDriver] = useState(false);
 
   const isClient = role === "CLIENT";
   const isSupplier = role === "SUPPLIER";
@@ -61,6 +63,11 @@ export default function DashboardScreen() {
       const [alerts, notifs] = await Promise.all([dealAlertsApi.list(), alertsApi.getNotifications()]);
       setDealAlerts(alerts);
       setNotifications(notifs);
+
+      // Whether the user already has ANY driver profile (pending or
+      // verified) — decides if the Transpò card says "Vin Chofè Moto" or
+      // "Dashboard Chofè Mwen". A 404 here just means no profile yet.
+      transportApi.myDriverProfile().then(() => setIsDriver(true)).catch(() => setIsDriver(false));
 
       if (isClient) {
         // A Client's "Repons Resevwa" count is the sum of responses across
@@ -217,6 +224,26 @@ export default function DashboardScreen() {
           </Pressable>
         )}
 
+        {/* Transpò & Livrezon — Phase 1: driver registration + driver
+            dashboard access only. Client-facing "M bezwen yon Moto" /
+            "M bezwen fè Livrezon" request screens are a later phase and
+            are intentionally not linked here yet, to avoid a dead-end
+            button. */}
+        <View style={styles.transportCard} testID="dashboard-transport-card">
+          <View style={styles.transportHeaderRow}>
+            <Ionicons name="bicycle" size={20} color={colors.brandPrimary} />
+            <Text style={styles.transportTitle}>Transpò & Livrezon</Text>
+          </View>
+          <Text style={styles.transportSubtitle}>Jwenn yon moto oswa voye yon kolis rapidman.</Text>
+          <Pressable
+            style={styles.transportBtn}
+            onPress={() => router.push(isDriver ? "/driver-dashboard" : "/become-driver")}
+            testID="dashboard-transport-cta"
+          >
+            <Text style={styles.transportBtnText}>{isDriver ? "Dashboard Chofè Mwen" : "Vin Chofè Moto"}</Text>
+          </Pressable>
+        </View>
+
         {/* Primary alert list — label changes by role */}
         <View style={styles.sectionHeaderRow}>
           <Text style={styles.sectionTitle}>
@@ -365,6 +392,13 @@ const styles = StyleSheet.create({
     ...shadow.card,
   },
   websiteBridgeText: { flex: 1, fontSize: fontSize.sm, color: colors.onSurface },
+
+  transportCard: { backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.md, marginTop: spacing.md, ...shadow.card },
+  transportHeaderRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
+  transportTitle: { fontSize: fontSize.base, fontFamily: font.medium, color: colors.onSurface },
+  transportSubtitle: { fontSize: fontSize.sm, color: colors.onSurfaceSecondary, marginTop: 4 },
+  transportBtn: { backgroundColor: colors.brandPrimary, borderRadius: radius.pill, paddingVertical: spacing.sm, alignItems: "center", marginTop: spacing.md },
+  transportBtnText: { color: colors.onBrandPrimary, fontSize: fontSize.sm, fontFamily: font.medium },
 
   sectionHeaderRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: spacing.xl, marginBottom: spacing.sm },
   sectionTitle: { fontSize: fontSize.lg, fontFamily: font.medium, color: colors.onSurface },
