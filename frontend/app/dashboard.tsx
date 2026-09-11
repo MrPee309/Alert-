@@ -224,23 +224,31 @@ export default function DashboardScreen() {
           </Pressable>
         )}
 
-        {/* Transpò & Livrezon — Phase 1: driver registration + driver
-            dashboard access only. Client-facing "M bezwen yon Moto" /
-            "M bezwen fè Livrezon" request screens are a later phase and
-            are intentionally not linked here yet, to avoid a dead-end
-            button. */}
+        {/* Transpò & Livrezon — Phase 3: client-facing request buttons now
+            link to real screens (request-moto/request-delivery), matching
+            the original spec's example layout. Driver registration/
+            dashboard access stays as a secondary link below, exactly as
+            specified — this card is not a 5th BottomNav tab. */}
         <View style={styles.transportCard} testID="dashboard-transport-card">
           <View style={styles.transportHeaderRow}>
             <Ionicons name="bicycle" size={20} color={colors.brandPrimary} />
             <Text style={styles.transportTitle}>Transpò & Livrezon</Text>
           </View>
           <Text style={styles.transportSubtitle}>Jwenn yon moto oswa voye yon kolis rapidman.</Text>
+          <View style={{ flexDirection: "row", gap: spacing.sm, marginTop: spacing.md }}>
+            <Pressable style={[styles.transportBtn, { flex: 1, marginTop: 0 }]} onPress={() => router.push("/request-moto")} testID="dashboard-request-moto">
+              <Text style={styles.transportBtnText}>M Bezwen Yon Moto</Text>
+            </Pressable>
+            <Pressable style={[styles.transportBtn, { flex: 1, marginTop: 0, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }]} onPress={() => router.push("/request-delivery")} testID="dashboard-request-delivery">
+              <Text style={[styles.transportBtnText, { color: colors.onSurface }]}>Fè Livrezon</Text>
+            </Pressable>
+          </View>
           <Pressable
-            style={styles.transportBtn}
+            style={styles.transportDriverLink}
             onPress={() => router.push(isDriver ? "/driver-dashboard" : "/become-driver")}
             testID="dashboard-transport-cta"
           >
-            <Text style={styles.transportBtnText}>{isDriver ? "Dashboard Chofè Mwen" : "Vin Chofè Moto"}</Text>
+            <Text style={styles.transportDriverLinkText}>{isDriver ? "Dashboard Chofè Mwen" : "Vin Chofè Moto"}</Text>
           </Pressable>
         </View>
 
@@ -399,6 +407,8 @@ const styles = StyleSheet.create({
   transportSubtitle: { fontSize: fontSize.sm, color: colors.onSurfaceSecondary, marginTop: 4 },
   transportBtn: { backgroundColor: colors.brandPrimary, borderRadius: radius.pill, paddingVertical: spacing.sm, alignItems: "center", marginTop: spacing.md },
   transportBtnText: { color: colors.onBrandPrimary, fontSize: fontSize.sm, fontFamily: font.medium },
+  transportDriverLink: { alignItems: "center", marginTop: spacing.md },
+  transportDriverLinkText: { color: colors.brandPrimary, fontSize: fontSize.sm, fontFamily: font.medium },
 
   sectionHeaderRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: spacing.xl, marginBottom: spacing.sm },
   sectionTitle: { fontSize: fontSize.lg, fontFamily: font.medium, color: colors.onSurface },
