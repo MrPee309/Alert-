@@ -73,6 +73,11 @@ function RootNavigator() {
         <Stack.Screen name="dashboard" />
         <Stack.Screen name="become-driver" />
         <Stack.Screen name="driver-dashboard" />
+        <Stack.Screen name="request-moto" />
+        <Stack.Screen name="request-delivery" />
+        <Stack.Screen name="searching-driver" />
+        <Stack.Screen name="transport-request-incoming" />
+        <Stack.Screen name="active-trip" />
         <Stack.Screen name="create-alert" />
         <Stack.Screen name="alert-details" />
         <Stack.Screen name="my-alerts" />
