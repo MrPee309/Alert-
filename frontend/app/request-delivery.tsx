@@ -8,12 +8,12 @@ import * as Location from "expo-location";
 import { transportApi } from "@/src/api/transport";
 import { colors, spacing, radius, fontSize, font, shadow } from "@/src/constants/theme";
 
-export default function RequestMotoScreen() {
+export default function RequestDeliveryScreen() {
   const [pickupAddress, setPickupAddress] = useState("");
   const [pickupCoords, setPickupCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [locating, setLocating] = useState(false);
   const [destination, setDestination] = useState("");
-  const [passengers, setPassengers] = useState("1");
+  const [packageDescription, setPackageDescription] = useState("");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -37,16 +37,16 @@ export default function RequestMotoScreen() {
 
   const submit = async () => {
     if (!pickupCoords) return Alert.alert("Manke enfòmasyon", "Tape \"Itilize pozisyon mwen\" pou n ka jwenn moto toupre w.");
-    if (!pickupAddress.trim() || !destination.trim()) return Alert.alert("Manke enfòmasyon", "Ranpli pikap ak destinasyon.");
+    if (!pickupAddress.trim() || !destination.trim() || !packageDescription.trim()) return Alert.alert("Manke enfòmasyon", "Ranpli pikap, destinasyon, ak kisa k ap livre.");
     setSubmitting(true);
     try {
       const req = await transportApi.createRequest({
-        service_type: "moto_taxi",
+        service_type: "delivery",
         pickup_address: pickupAddress.trim(),
         pickup_lat: pickupCoords.lat,
         pickup_lng: pickupCoords.lng,
         destination_address: destination.trim(),
-        passenger_count: Number(passengers) || 1,
+        package_description: packageDescription.trim(),
         notes: notes.trim(),
       });
       router.replace({ pathname: "/searching-driver", params: { id: req.id } });
@@ -60,15 +60,15 @@ export default function RequestMotoScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} testID="request-moto-back"><Ionicons name="chevron-back" size={26} color={colors.onSurface} /></Pressable>
-        <Text style={styles.headerTitle}>M Bezwen Yon Moto</Text>
+        <Pressable onPress={() => router.back()} testID="request-delivery-back"><Ionicons name="chevron-back" size={26} color={colors.onSurface} /></Pressable>
+        <Text style={styles.headerTitle}>M Bezwen Fè Livrezon</Text>
         <View style={{ width: 26 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Text style={styles.label}>Pikap</Text>
-        <TextInput style={styles.input} value={pickupAddress} onChangeText={setPickupAddress} placeholder="egzanp: Delmas 33" testID="request-moto-pickup" />
-        <Pressable style={styles.locBtn} onPress={useCurrentLocation} disabled={locating} testID="request-moto-use-location">
+        <TextInput style={styles.input} value={pickupAddress} onChangeText={setPickupAddress} placeholder="egzanp: Delmas 33" testID="request-delivery-pickup" />
+        <Pressable style={styles.locBtn} onPress={useCurrentLocation} disabled={locating} testID="request-delivery-use-location">
           {locating ? <ActivityIndicator color={colors.brandPrimary} /> : (
             <>
               <Ionicons name="locate" size={16} color={colors.brandPrimary} />
@@ -78,16 +78,16 @@ export default function RequestMotoScreen() {
         </Pressable>
 
         <Text style={[styles.label, { marginTop: spacing.lg }]}>Destinasyon</Text>
-        <TextInput style={styles.input} value={destination} onChangeText={setDestination} placeholder="egzanp: Pétion-Ville" testID="request-moto-destination" />
+        <TextInput style={styles.input} value={destination} onChangeText={setDestination} placeholder="egzanp: Pétion-Ville" testID="request-delivery-destination" />
 
-        <Text style={[styles.label, { marginTop: spacing.lg }]}>Kantite Pasaje</Text>
-        <TextInput style={styles.input} value={passengers} onChangeText={setPassengers} keyboardType="number-pad" testID="request-moto-passengers" />
+        <Text style={[styles.label, { marginTop: spacing.lg }]}>Kisa k ap Livre?</Text>
+        <TextInput style={styles.input} value={packageDescription} onChangeText={setPackageDescription} placeholder="egzanp: Telefòn, Pyès, Dokiman..." testID="request-delivery-package" />
 
         <Text style={[styles.label, { marginTop: spacing.lg }]}>Nòt (opsyonèl)</Text>
-        <TextInput style={[styles.input, { height: 80 }]} value={notes} onChangeText={setNotes} multiline placeholder="Enfòmasyon anplis..." testID="request-moto-notes" />
+        <TextInput style={[styles.input, { height: 80 }]} value={notes} onChangeText={setNotes} multiline placeholder="Enfòmasyon anplis..." testID="request-delivery-notes" />
 
-        <Pressable style={[styles.submitBtn, submitting && { opacity: 0.6 }]} onPress={submit} disabled={submitting} testID="request-moto-submit">
-          {submitting ? <ActivityIndicator color={colors.onBrandPrimary} /> : <Text style={styles.submitText}>Chèche Moto</Text>}
+        <Pressable style={[styles.submitBtn, submitting && { opacity: 0.6 }]} onPress={submit} disabled={submitting} testID="request-delivery-submit">
+          {submitting ? <ActivityIndicator color={colors.onBrandPrimary} /> : <Text style={styles.submitText}>Chèche Moto pou Livrezon</Text>}
         </Pressable>
       </ScrollView>
     </SafeAreaView>
