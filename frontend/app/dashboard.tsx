@@ -162,20 +162,12 @@ export default function DashboardScreen() {
         <View style={styles.quickGrid}>
           {(isClient ? [
             { icon: "search", label: "Chèche Pwodwi", onPress: () => router.push("/browse-products") },
-            { icon: "bicycle", label: "Mande Moto", onPress: () => router.push("/request-moto") },
-            { icon: "cube", label: "Mande Livrezon", onPress: () => router.push("/request-delivery") },
-            { icon: "construct", label: "Jwenn Teknisyen", onPress: () => router.push("/browse-technicians") },
             { icon: "megaphone", label: "Fè yon Demand", onPress: () => router.push("/create-alert") },
-            { icon: "storefront", label: "Biznis Lokal", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/browse?category=business`) },
           ] : isPro ? [
             { icon: "add-circle", label: "Ajoute Pwodwi", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/sell`) },
-            { icon: "globe", label: "Gade Demand yo", onPress: () => router.push("/discover-alerts") },
-            { icon: "bicycle", label: "Livrezon", onPress: () => router.push("/request-delivery") },
             { icon: "chatbubbles", label: "Messenger", onPress: () => router.push("/messenger") },
           ] : [
-            { icon: "add-circle", label: "Ajoute Pwodwi", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/suppliers`) },
-            { icon: "globe", label: "Demand yo", onPress: () => router.push("/discover-alerts") },
-            { icon: "mail", label: "Enquiries", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/suppliers`) },
+            { icon: "globe", label: "Sit Founisè Mwen", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/suppliers`) },
             { icon: "chatbubbles", label: "Messenger", onPress: () => router.push("/messenger") },
           ]).map((a, i) => (
             <Pressable key={i} style={styles.quickGridItem} onPress={a.onPress} testID={`dashboard-quick-${i}`}>
@@ -258,7 +250,6 @@ export default function DashboardScreen() {
             { icon: "laptop", label: "Laptop", onPress: () => router.push({ pathname: "/browse-products", params: { category: "laptop" } }) },
             { icon: "construct", label: "Teknisyen", onPress: () => router.push("/browse-technicians") },
             { icon: "storefront", label: "Biznis Lokal", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/browse?category=business`) },
-            { icon: "bicycle", label: "Transpò", onPress: () => router.push("/request-moto") },
             { icon: "earth", label: "Founisè", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/suppliers`) },
             { icon: "megaphone", label: "Demand & Òf", onPress: () => router.push("/discover-alerts") },
           ].map((s, i) => (
