@@ -79,6 +79,9 @@ function RootNavigator() {
         <Stack.Screen name="transport-request-incoming" />
         <Stack.Screen name="active-trip" />
         <Stack.Screen name="transport-history" />
+        <Stack.Screen name="browse-products" />
+        <Stack.Screen name="product-details" />
+        <Stack.Screen name="browse-technicians" />
         <Stack.Screen name="create-alert" />
         <Stack.Screen name="alert-details" />
         <Stack.Screen name="my-alerts" />
