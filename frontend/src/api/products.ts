@@ -38,6 +38,33 @@ export interface ProductDetailResponse {
   is_favorite: boolean;
 }
 
+export interface ProductListResponse {
+  products: DealLakayProduct[];
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
+}
+
+export interface ProductListParams {
+  q?: string;
+  category?: string;
+  city?: string;
+  sort?: string;
+  page?: number;
+}
+
 export const productsApi = {
   get: (identifier: string) => apiClient.get<ProductDetailResponse>(`/products/${identifier}`, false),
+
+  list: (params: ProductListParams = {}) => {
+    const qs = new URLSearchParams();
+    if (params.q) qs.set("q", params.q);
+    if (params.category) qs.set("category", params.category);
+    if (params.city) qs.set("city", params.city);
+    if (params.sort) qs.set("sort", params.sort);
+    if (params.page) qs.set("page", String(params.page));
+    const suffix = qs.toString() ? `?${qs.toString()}` : "";
+    return apiClient.get<ProductListResponse>(`/products${suffix}`, false);
+  },
 };
