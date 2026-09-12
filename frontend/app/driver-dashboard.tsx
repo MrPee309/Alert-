@@ -178,6 +178,11 @@ export default function DriverDashboardScreen() {
           <Text style={styles.infoLabel}>Evalyasyon</Text>
           <Text style={styles.infoValue}>{profile.review_count > 0 ? `⭐ ${profile.rating.toFixed(1)} (${profile.review_count})` : "Poko gen evalyasyon"}</Text>
         </View>
+
+        <Pressable style={styles.historyLink} onPress={() => router.push("/transport-history")} testID="driver-dashboard-history">
+          <Ionicons name="time-outline" size={18} color={colors.brandPrimary} />
+          <Text style={styles.historyLinkText}>Istwa Kous Mwen</Text>
+        </Pressable>
       </ScrollView>
     </SafeAreaView>
   );
@@ -200,6 +205,8 @@ const styles = StyleSheet.create({
   infoCard: { backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.md, marginTop: spacing.md, ...shadow.card },
   infoLabel: { fontSize: fontSize.sm, color: colors.onSurfaceSecondary },
   infoValue: { fontSize: fontSize.base, color: colors.onSurface, fontFamily: font.medium, marginTop: 2 },
+  historyLink: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.xs, marginTop: spacing.lg, paddingVertical: spacing.sm },
+  historyLinkText: { color: colors.brandPrimary, fontSize: fontSize.sm, fontFamily: font.medium },
   emptyState: { flex: 1, alignItems: "center", justifyContent: "center", padding: spacing.xl, gap: spacing.sm },
   emptyTitle: { fontSize: fontSize.base, color: colors.onSurface, textAlign: "center" },
   emptyAction: { marginTop: spacing.md, backgroundColor: colors.brandPrimary, borderRadius: radius.pill, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
