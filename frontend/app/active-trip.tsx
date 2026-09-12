@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { useAuth } from "@/src/context/auth-context";
 import { transportApi, type TransportRequest } from "@/src/api/transport";
+import { reviewsApi } from "@/src/api/reviews";
 import { colors, spacing, radius, fontSize, font, shadow } from "@/src/constants/theme";
 
 const POLL_MS = 5000;
@@ -43,6 +44,22 @@ export default function ActiveTripScreen() {
   }, [load]);
 
   const isDriver = !!request && request.matched_driver_id === user?.id;
+  const [ratingValue, setRatingValue] = useState(0);
+  const [ratingSubmitted, setRatingSubmitted] = useState(false);
+  const [ratingSubmitting, setRatingSubmitting] = useState(false);
+
+  const submitRating = async () => {
+    if (!request || !ratingValue) return;
+    setRatingSubmitting(true);
+    try {
+      await reviewsApi.rateDriver(request.matched_driver_id!, request.id, ratingValue);
+      setRatingSubmitted(true);
+    } catch (e: any) {
+      Alert.alert("Erè", e?.message || "Nou pa t ka voye evalyasyon ou.");
+    } finally {
+      setRatingSubmitting(false);
+    }
+  };
 
   const runAction = async (fn: () => Promise<TransportRequest>) => {
     setActing(true);
@@ -111,7 +128,23 @@ export default function ActiveTripScreen() {
           </Pressable>
         )}
 
-        {request.status === "trip_completed" && (
+        {!isDriver && request.status === "trip_completed" && !ratingSubmitted && (
+          <View style={styles.ratingBox}>
+            <Text style={styles.ratingPrompt}>Kijan chofè a te ye?</Text>
+            <View style={styles.starRow}>
+              {[1, 2, 3, 4, 5].map((n) => (
+                <Pressable key={n} onPress={() => setRatingValue(n)} testID={`active-trip-star-${n}`}>
+                  <Ionicons name={n <= ratingValue ? "star" : "star-outline"} size={32} color="#FBBF24" />
+                </Pressable>
+              ))}
+            </View>
+            <Pressable style={[styles.actionBtn, !ratingValue && { opacity: 0.5 }]} onPress={submitRating} disabled={!ratingValue || ratingSubmitting} testID="active-trip-submit-rating">
+              {ratingSubmitting ? <ActivityIndicator color={colors.onBrandPrimary} /> : <Text style={styles.actionBtnText}>Voye Evalyasyon</Text>}
+            </Pressable>
+          </View>
+        )}
+
+        {request.status === "trip_completed" && (isDriver || ratingSubmitted) && (
           <Pressable style={styles.doneBtn} onPress={() => router.replace("/dashboard")} testID="active-trip-done">
             <Text style={styles.doneBtnText}>Retounen Akèy</Text>
           </Pressable>
@@ -141,5 +174,8 @@ const styles = StyleSheet.create({
   actionBtnText: { color: colors.onBrandPrimary, fontSize: fontSize.base, fontFamily: font.medium },
   doneBtn: { backgroundColor: colors.surfaceSecondary, borderWidth: 1, borderColor: colors.border, borderRadius: radius.pill, paddingVertical: spacing.md, alignItems: "center", marginTop: spacing.lg },
   doneBtnText: { color: colors.onSurface, fontSize: fontSize.base, fontFamily: font.medium },
+  ratingBox: { marginTop: spacing.lg, alignItems: "center" },
+  ratingPrompt: { fontSize: fontSize.base, color: colors.onSurface, marginBottom: spacing.sm },
+  starRow: { flexDirection: "row", gap: spacing.xs, marginBottom: spacing.md },
   waitNote: { fontSize: fontSize.sm, color: colors.onSurfaceTertiary, textAlign: "center", marginTop: spacing.lg },
 });
