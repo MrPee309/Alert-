@@ -250,6 +250,9 @@ export default function DashboardScreen() {
           >
             <Text style={styles.transportDriverLinkText}>{isDriver ? "Dashboard Chofè Mwen" : "Vin Chofè Moto"}</Text>
           </Pressable>
+          <Pressable style={styles.transportDriverLink} onPress={() => router.push("/transport-history")} testID="dashboard-transport-history">
+            <Text style={styles.transportDriverLinkText}>Istwa Transpò Mwen</Text>
+          </Pressable>
         </View>
 
         {/* Primary alert list — label changes by role */}
