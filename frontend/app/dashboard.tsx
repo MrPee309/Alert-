@@ -139,6 +139,52 @@ export default function DashboardScreen() {
           <NotificationBell />
         </View>
 
+        {/* Universal search — the mobile app has no native product/
+            technician database of its own, so a search bridges to the
+            website's search results rather than faking a native result
+            list this app can't actually populate. */}
+        <Pressable
+          style={styles.searchBar}
+          onPress={() => router.push("/browse-products")}
+          testID="dashboard-search-bar"
+        >
+          <Ionicons name="search" size={18} color={colors.onSurfaceTertiary} />
+          <Text style={styles.searchBarText}>Chèche pwodwi, sèvis, teknisyen...</Text>
+        </Pressable>
+
+        {/* Universal Quick Actions hub — role-aware, per the "what do you
+            want to do today" principle. Actions with an existing native
+            screen link there directly; actions the mobile app doesn't
+            have a native screen for (product search, technician browsing,
+            local business browsing) bridge to the equivalent website page
+            rather than inventing a fake native flow. */}
+        <Text style={styles.hubQuestion}>Kisa ou vle fè jodi a?</Text>
+        <View style={styles.quickGrid}>
+          {(isClient ? [
+            { icon: "search", label: "Chèche Pwodwi", onPress: () => router.push("/browse-products") },
+            { icon: "bicycle", label: "Mande Moto", onPress: () => router.push("/request-moto") },
+            { icon: "cube", label: "Mande Livrezon", onPress: () => router.push("/request-delivery") },
+            { icon: "construct", label: "Jwenn Teknisyen", onPress: () => router.push("/browse-technicians") },
+            { icon: "megaphone", label: "Fè yon Demand", onPress: () => router.push("/create-alert") },
+            { icon: "storefront", label: "Biznis Lokal", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/browse?category=business`) },
+          ] : isPro ? [
+            { icon: "add-circle", label: "Ajoute Pwodwi", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/sell`) },
+            { icon: "globe", label: "Gade Demand yo", onPress: () => router.push("/discover-alerts") },
+            { icon: "bicycle", label: "Livrezon", onPress: () => router.push("/request-delivery") },
+            { icon: "chatbubbles", label: "Messenger", onPress: () => router.push("/messenger") },
+          ] : [
+            { icon: "add-circle", label: "Ajoute Pwodwi", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/suppliers`) },
+            { icon: "globe", label: "Demand yo", onPress: () => router.push("/discover-alerts") },
+            { icon: "mail", label: "Enquiries", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/suppliers`) },
+            { icon: "chatbubbles", label: "Messenger", onPress: () => router.push("/messenger") },
+          ]).map((a, i) => (
+            <Pressable key={i} style={styles.quickGridItem} onPress={a.onPress} testID={`dashboard-quick-${i}`}>
+              <View style={styles.quickGridIcon}><Ionicons name={a.icon as any} size={20} color={colors.brandPrimary} /></View>
+              <Text style={styles.quickGridLabel}>{a.label}</Text>
+            </Pressable>
+          ))}
+        </View>
+
         {/* Summary cards — content differs by role */}
         <View style={styles.summaryRow}>
           {isClient && (
@@ -198,6 +244,30 @@ export default function DashboardScreen() {
             </Pressable>
           </View>
         )}
+
+        {/* "Tout Sèvis" — unified category hub so every DealLakay service
+            is one tap away, without the user needing to know which part
+            of the ecosystem it lives in. Categories with no native mobile
+            screen bridge to the equivalent website page (same honest
+            pattern as the search bar and Seller/Supplier product links
+            above), rather than faking native browsing this app can't do. */}
+        <Text style={styles.sectionTitle}>Tout Sèvis</Text>
+        <View style={styles.serviceHubRow}>
+          {[
+            { icon: "phone-portrait", label: "Telefòn", onPress: () => router.push({ pathname: "/browse-products", params: { category: "phone" } }) },
+            { icon: "laptop", label: "Laptop", onPress: () => router.push({ pathname: "/browse-products", params: { category: "laptop" } }) },
+            { icon: "construct", label: "Teknisyen", onPress: () => router.push("/browse-technicians") },
+            { icon: "storefront", label: "Biznis Lokal", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/browse?category=business`) },
+            { icon: "bicycle", label: "Transpò", onPress: () => router.push("/request-moto") },
+            { icon: "earth", label: "Founisè", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/suppliers`) },
+            { icon: "megaphone", label: "Demand & Òf", onPress: () => router.push("/discover-alerts") },
+          ].map((s, i) => (
+            <Pressable key={i} style={styles.serviceHubItem} onPress={s.onPress} testID={`dashboard-service-${i}`}>
+              <View style={styles.serviceHubIcon}><Ionicons name={s.icon as any} size={18} color={colors.brandPrimary} /></View>
+              <Text style={styles.serviceHubLabel}>{s.label}</Text>
+            </Pressable>
+          ))}
+        </View>
 
         {/* Seller/Supplier bridge to website-managed features not yet
             native to the mobile app (product catalog, inquiries, shipping) */}
@@ -368,6 +438,20 @@ const styles = StyleSheet.create({
   subtitle: { fontSize: fontSize.sm, color: colors.onSurfaceSecondary, marginTop: 2 },
   roleBadge: { alignSelf: "flex-start", backgroundColor: colors.brandTertiary, borderRadius: radius.pill, paddingHorizontal: spacing.sm, paddingVertical: 2, marginTop: spacing.xs },
   roleBadgeText: { color: colors.onBrandTertiary, fontSize: fontSize.sm, fontFamily: font.medium },
+
+  searchBar: { flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: colors.surface, borderRadius: radius.lg, paddingHorizontal: spacing.md, paddingVertical: spacing.sm + 2, marginTop: spacing.lg, ...shadow.card },
+  searchBarText: { color: colors.onSurfaceTertiary, fontSize: fontSize.sm },
+
+  hubQuestion: { fontSize: fontSize.lg, fontFamily: font.medium, color: colors.onSurface, marginTop: spacing.xl, marginBottom: spacing.md },
+  quickGrid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
+  quickGridItem: { width: "31%", backgroundColor: colors.surface, borderRadius: radius.lg, paddingVertical: spacing.md, alignItems: "center", gap: spacing.xs, ...shadow.card },
+  quickGridIcon: { width: 40, height: 40, borderRadius: radius.pill, backgroundColor: colors.brandTertiary, alignItems: "center", justifyContent: "center" },
+  quickGridLabel: { fontSize: fontSize.sm, color: colors.onSurface, textAlign: "center", fontFamily: font.medium },
+
+  serviceHubRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.sm },
+  serviceHubItem: { width: "22%", alignItems: "center", gap: spacing.xs },
+  serviceHubIcon: { width: 44, height: 44, borderRadius: radius.pill, backgroundColor: colors.surface, alignItems: "center", justifyContent: "center", ...shadow.card },
+  serviceHubLabel: { fontSize: 11, color: colors.onSurfaceSecondary, textAlign: "center" },
 
   summaryRow: { flexDirection: "row", gap: spacing.md, marginTop: spacing.xl },
   summaryCard: {
