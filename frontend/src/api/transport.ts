@@ -60,6 +60,8 @@ export interface TransportRequestInput {
   passenger_count?: number;
   package_description?: string;
   notes?: string;
+  related_product_id?: string;
+  related_request_id?: string;
 }
 
 export type RequestStatus = "matching" | "accepted" | "arrived" | "no_driver_found" | "cancelled" | "trip_started" | "trip_completed";
@@ -72,6 +74,8 @@ export interface TransportRequest {
   passenger_count: number | null;
   package_description: string;
   notes: string;
+  related_product_id: string | null;
+  related_request_id: string | null;
   status: RequestStatus;
   matched_driver_id: string | null;
   conversation_id: string | null;
