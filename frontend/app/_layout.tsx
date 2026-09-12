@@ -78,6 +78,7 @@ function RootNavigator() {
         <Stack.Screen name="searching-driver" />
         <Stack.Screen name="transport-request-incoming" />
         <Stack.Screen name="active-trip" />
+        <Stack.Screen name="transport-history" />
         <Stack.Screen name="create-alert" />
         <Stack.Screen name="alert-details" />
         <Stack.Screen name="my-alerts" />
