@@ -49,8 +49,8 @@ export default function BecomeDriverScreen() {
 
   useEffect(() => {
     if (!city) { setStations([]); setStationId(null); return; }
-    transportApi.listStations(city).then(setStations).catch(() => setStations([]));
-  }, [city]);
+    transportApi.listStations(city, area || undefined).then(setStations).catch(() => setStations([]));
+  }, [city, area]);
 
   const submit = async () => {
     if (!city) return Alert.alert("Manke enfòmasyon", "Chwazi vil ou.");
