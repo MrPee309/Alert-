@@ -151,6 +151,18 @@ export default function DashboardScreen() {
           <Text style={styles.searchBarText}>Chèche pwodwi, sèvis, teknisyen...</Text>
         </Pressable>
 
+        {/* ONE universal "Fè yon Demand" entry point (Phase 3) — for a
+            client who doesn't yet know which section they need. Each
+            domain section below ALSO has its own direct demand button for
+            when the context is already known, so this isn't a duplicate:
+            it's the fast top-level path vs. the contextual in-section one. */}
+        {isClient && (
+          <Pressable style={styles.demandHubBtn} onPress={() => router.push("/make-a-demand")} testID="dashboard-make-a-demand">
+            <Ionicons name="megaphone" size={18} color={colors.onBrandPrimary} />
+            <Text style={styles.demandHubBtnText}>📢 Fè yon Demand</Text>
+          </Pressable>
+        )}
+
         {isClient ? (
           <>
             {/* Client home is organized into domain sections — each with
@@ -489,6 +501,9 @@ const styles = StyleSheet.create({
 
   searchBar: { flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: colors.surface, borderRadius: radius.lg, paddingHorizontal: spacing.md, paddingVertical: spacing.sm + 2, marginTop: spacing.lg, ...shadow.card },
   searchBarText: { color: colors.onSurfaceTertiary, fontSize: fontSize.sm },
+
+  demandHubBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.xs, backgroundColor: colors.brandPrimary, borderRadius: radius.lg, paddingVertical: spacing.md, marginTop: spacing.sm },
+  demandHubBtnText: { color: colors.onBrandPrimary, fontSize: fontSize.base, fontFamily: font.medium },
 
   hubQuestion: { fontSize: fontSize.lg, fontFamily: font.medium, color: colors.onSurface, marginTop: spacing.xl, marginBottom: spacing.md },
   quickGrid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
