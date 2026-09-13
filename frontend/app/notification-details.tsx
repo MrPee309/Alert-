@@ -91,8 +91,25 @@ export default function NotificationDetailsScreen() {
     }, [load]),
   );
 
+  // Some notification links point to a screen THIS APP actually has
+  // natively (Transport, Messenger, Alerts) — those must open in-app via
+  // router.push, not bounce out to the website in an external browser.
+  // Everything else (e.g. a seller/technician review notification linking
+  // to a website-only page) keeps the existing website-bridge behavior.
+  const INTERNAL_ROUTE_PREFIXES = [
+    "/active-trip", "/transport-request-incoming", "/searching-driver",
+    "/driver-dashboard", "/transport-history", "/conversation-details",
+    "/alert-details", "/product-details",
+  ];
+
   const openLink = async () => {
-    if (!WEBSITE_URL || !notification?.link) return;
+    if (!notification?.link) return;
+    const isInternal = INTERNAL_ROUTE_PREFIXES.some((p) => notification.link.startsWith(p));
+    if (isInternal) {
+      router.push(notification.link as any);
+      return;
+    }
+    if (!WEBSITE_URL) return;
     await WebBrowser.openBrowserAsync(`${WEBSITE_URL}${notification.link}`);
   };
 
@@ -169,10 +186,10 @@ export default function NotificationDetailsScreen() {
             </View>
           )}
 
-          {!!notification.link && !!WEBSITE_URL && (
+          {!!notification.link && (WEBSITE_URL || INTERNAL_ROUTE_PREFIXES.some((p) => notification.link.startsWith(p))) && (
             <Pressable style={styles.ctaButton} onPress={openLink} testID="notification-details-cta">
               <Text style={styles.ctaButtonText}>{product ? "Wè Pwodwi" : "Wè sou DealLakay"}</Text>
-              <Ionicons name="open-outline" size={16} color={colors.onBrandPrimary} />
+              <Ionicons name={INTERNAL_ROUTE_PREFIXES.some((p) => notification.link.startsWith(p)) ? "arrow-forward" : "open-outline"} size={16} color={colors.onBrandPrimary} />
             </Pressable>
           )}
         </ScrollView>
