@@ -44,4 +44,8 @@ export const techniciansApi = {
     const suffix = qs.toString() ? `?${qs.toString()}` : "";
     return apiClient.get<TechnicianListResponse>(`/technicians${suffix}`, false);
   },
+
+  toggleFavorite: (username: string) => apiClient.post<{ favorited: boolean }>(`/technician-favorites/${username}`),
+
+  myFavorites: () => apiClient.get<DealLakayTechnician[]>("/technician-favorites"),
 };
