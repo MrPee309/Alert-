@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { View, Text, StyleSheet, Pressable, ActivityIndicator, Alert } from "react-native";
+import { View, Text, StyleSheet, Pressable, ActivityIndicator, Alert, TextInput } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -45,6 +45,7 @@ export default function ActiveTripScreen() {
 
   const isDriver = !!request && request.matched_driver_id === user?.id;
   const [ratingValue, setRatingValue] = useState(0);
+  const [priceInput, setPriceInput] = useState("");
   const [ratingSubmitted, setRatingSubmitted] = useState(false);
   const [ratingSubmitting, setRatingSubmitting] = useState(false);
 
@@ -109,6 +110,42 @@ export default function ActiveTripScreen() {
           </Pressable>
         )}
 
+        {/* Price agreement — deliberately NOT a payment system. This only
+            RECORDS the number the two sides settled on through Messenger
+            (the actual negotiation happens there, reusing existing chat —
+            not a separate offer/counter-offer UI). Either side can set it
+            before the trip starts; once set, it's shown to both. */}
+        {(request.status === "accepted" || request.status === "arrived") && (
+          request.agreed_price ? (
+            <View style={styles.priceBox}>
+              <Text style={styles.priceLabel}>Pri Dakò</Text>
+              <Text style={styles.priceValue}>{request.agreed_price.toLocaleString()} Gdes</Text>
+            </View>
+          ) : (
+            <View style={styles.priceBox}>
+              <Text style={styles.priceLabel}>Negosye pri a sou Messenger, apre konfime l isit la</Text>
+              <View style={styles.priceInputRow}>
+                <TextInput
+                  style={styles.priceInput}
+                  value={priceInput}
+                  onChangeText={setPriceInput}
+                  placeholder="egzanp: 350"
+                  keyboardType="number-pad"
+                  testID="active-trip-price-input"
+                />
+                <Pressable
+                  style={styles.priceConfirmBtn}
+                  onPress={() => runAction(async () => transportApi.agreePrice(request.id, Number(priceInput)))}
+                  disabled={!priceInput || acting}
+                  testID="active-trip-price-confirm"
+                >
+                  <Text style={styles.priceConfirmBtnText}>Konfime</Text>
+                </Pressable>
+              </View>
+            </View>
+          )
+        )}
+
         {/* Driver-only lifecycle controls — only the button matching the
             CURRENT status shows, so a step can never be triggered out of
             order from the UI (the backend also guards this either way). */}
@@ -170,6 +207,13 @@ const styles = StyleSheet.create({
   meta: { fontSize: fontSize.sm, color: colors.onSurfaceSecondary, textAlign: "center", marginTop: spacing.xs },
   messageBtn: { flexDirection: "row", gap: spacing.xs, alignItems: "center", justifyContent: "center", backgroundColor: colors.brandTertiary, borderRadius: radius.pill, paddingVertical: spacing.md, marginTop: spacing.lg },
   messageBtnText: { color: colors.brandPrimary, fontSize: fontSize.base, fontFamily: font.medium },
+  priceBox: { marginTop: spacing.lg, backgroundColor: colors.surfaceSecondary, borderRadius: radius.lg, padding: spacing.md },
+  priceLabel: { fontSize: fontSize.sm, color: colors.onSurfaceSecondary, textAlign: "center" },
+  priceValue: { fontSize: fontSize.xl, fontFamily: font.medium, color: colors.brandPrimary, textAlign: "center", marginTop: spacing.xs },
+  priceInputRow: { flexDirection: "row", gap: spacing.sm, marginTop: spacing.sm },
+  priceInput: { flex: 1, backgroundColor: colors.surface, borderRadius: radius.md, borderWidth: 1, borderColor: colors.border, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, fontSize: fontSize.base, color: colors.onSurface },
+  priceConfirmBtn: { backgroundColor: colors.brandPrimary, borderRadius: radius.md, paddingHorizontal: spacing.md, alignItems: "center", justifyContent: "center" },
+  priceConfirmBtnText: { color: colors.onBrandPrimary, fontSize: fontSize.sm, fontFamily: font.medium },
   actionBtn: { backgroundColor: colors.brandPrimary, borderRadius: radius.pill, paddingVertical: spacing.md, alignItems: "center", marginTop: spacing.lg },
   actionBtnText: { color: colors.onBrandPrimary, fontSize: fontSize.base, fontFamily: font.medium },
   doneBtn: { backgroundColor: colors.surfaceSecondary, borderWidth: 1, borderColor: colors.border, borderRadius: radius.pill, paddingVertical: spacing.md, alignItems: "center", marginTop: spacing.lg },
