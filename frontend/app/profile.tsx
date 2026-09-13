@@ -108,6 +108,7 @@ export default function ProfileScreen() {
 
         <View style={styles.sectionCard}>
           <MenuRow icon="person-outline" label="Enfòmasyon Pèsonèl" onPress={() => router.push("/personal-info")} testID="profile-personal-info" />
+          <MenuRow icon="heart-outline" label="Sa Mwen Sove" onPress={() => router.push("/favorites")} testID="profile-favorites" />
           <MenuRow icon="notifications-outline" label="Alèt Ou Yo" onPress={() => router.push("/my-alerts")} testID="profile-my-alerts" />
           <MenuRow icon="mail-unread-outline" label="Notifikasyon Ou Yo" onPress={() => router.push("/notifications")} testID="profile-notifications" />
           <MenuRow icon="options-outline" label="Paramèt" onPress={() => router.push("/alert-settings")} testID="profile-settings" />
