@@ -32,14 +32,14 @@ const CONDITIONS = ["Nèf", "Itilize", "Rekondisyone"];
 export default function CreateAlertScreen() {
   const { user } = useAuth();
   const { canCreateOffer, canCreateDemand, roleLabel } = useUserRole();
-  const { editId } = useLocalSearchParams<{ editId?: string }>();
+  const { editId, category: initialCategory } = useLocalSearchParams<{ editId?: string; category?: string }>();
   const isEdit = !!editId;
   const canOffer = !!(user?.isSeller || user?.isTechnician);
 
   const [alertType, setAlertType] = useState<AlertType>("DEMAND");
   const [locations, setLocations] = useState<DealLakayLocation[]>([]);
   const [keyword, setKeyword] = useState("");
-  const [category, setCategory] = useState<string | null>(null);
+  const [category, setCategory] = useState<string | null>(initialCategory || null);
   const [condition, setCondition] = useState<string | null>(null);
   const [quantity, setQuantity] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
