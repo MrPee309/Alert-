@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, ScrollView, StyleSheet, Pressable, TextInput, ActivityIndicator, Alert } from "react-native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
@@ -9,6 +9,7 @@ import { transportApi } from "@/src/api/transport";
 import { colors, spacing, radius, fontSize, font, shadow } from "@/src/constants/theme";
 
 export default function RequestDeliveryScreen() {
+  const { destination: prefillDestination } = useLocalSearchParams<{ destination?: string }>();
   const [pickupAddress, setPickupAddress] = useState("");
   const [pickupCoords, setPickupCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [locating, setLocating] = useState(false);
