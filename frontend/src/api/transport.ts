@@ -97,8 +97,13 @@ export const transportApi = {
   updateLocation: (lat: number, lng: number) =>
     apiClient.put<{ message: string }>("/transport/drivers/location", { lat, lng }),
 
-  listStations: (city?: string) =>
-    apiClient.get<Station[]>(`/transport/stations${city ? `?city=${encodeURIComponent(city)}` : ""}`),
+  listStations: (city?: string, zone?: string) => {
+    const qs = new URLSearchParams();
+    if (city) qs.set("city", city);
+    if (zone) qs.set("zone", zone);
+    const suffix = qs.toString() ? `?${qs.toString()}` : "";
+    return apiClient.get<Station[]>(`/transport/stations${suffix}`);
+  },
 
   createRequest: (data: TransportRequestInput) =>
     apiClient.post<TransportRequest>("/transport/requests", data),
