@@ -8,6 +8,7 @@ import {
   RefreshControl,
   ActivityIndicator,
   Linking,
+  Image,
 } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -19,6 +20,7 @@ import { useUserRole } from "@/src/hooks/use-user-role";
 import { dealAlertsApi, type DealAlert } from "@/src/api/deal-alerts";
 import { alertsApi } from "@/src/api/alerts";
 import { transportApi } from "@/src/api/transport";
+import { techniciansApi, type DealLakayTechnician } from "@/src/api/technicians";
 import { WEBSITE_URL } from "@/src/constants/config";
 import type { AppNotification } from "@/src/types";
 import { colors, spacing, radius, fontSize, font, shadow } from "@/src/constants/theme";
@@ -51,6 +53,7 @@ export default function DashboardScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [isDriver, setIsDriver] = useState(false);
+  const [nearbyTechnicians, setNearbyTechnicians] = useState<DealLakayTechnician[]>([]);
 
   const isClient = role === "CLIENT";
   const isSupplier = role === "SUPPLIER";
@@ -68,6 +71,10 @@ export default function DashboardScreen() {
       // verified) — decides if the Transpò card says "Vin Chofè Moto" or
       // "Dashboard Chofè Mwen". A 404 here just means no profile yet.
       transportApi.myDriverProfile().then(() => setIsDriver(true)).catch(() => setIsDriver(false));
+
+      if (isClient) {
+        techniciansApi.list({ sort: "recommended" }).then((res) => setNearbyTechnicians(res.technicians.slice(0, 3))).catch(() => setNearbyTechnicians([]));
+      }
 
       if (isClient) {
         // A Client's "Repons Resevwa" count is the sum of responses across
@@ -131,7 +138,13 @@ export default function DashboardScreen() {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerText}>
-            <Text style={styles.greeting}>Bonjou, {user?.fullName?.split(" ")[0] || "zanmi"} 👋</Text>
+            <Text style={styles.greeting}>Bonjou, {user?.fullName?.split(" ")[0] || "zanmi"} {
+              role === "TECHNICIAN" ? "👋🔧" :
+              role === "SELLER" ? "👋🛍️" :
+              role === "TECHNICIAN_SELLER" ? "👋🔧🛍️" :
+              role === "SUPPLIER" ? "👋🌎" :
+              "👋"
+            }</Text>
             <View style={[styles.roleBadge, { backgroundColor: roleColors[0] + "22" }]}>
               <Text style={[styles.roleBadgeText, { color: roleColors[1] }]}>{roleLabel}</Text>
             </View>
@@ -151,103 +164,76 @@ export default function DashboardScreen() {
           <Text style={styles.searchBarText}>Chèche pwodwi, sèvis, teknisyen...</Text>
         </Pressable>
 
-        {/* ONE universal "Fè yon Demand" entry point (Phase 3) — for a
-            client who doesn't yet know which section they need. Each
-            domain section below ALSO has its own direct demand button for
-            when the context is already known, so this isn't a duplicate:
-            it's the fast top-level path vs. the contextual in-section one. */}
-        {isClient && (
-          <Pressable style={styles.demandHubBtn} onPress={() => router.push("/make-a-demand")} testID="dashboard-make-a-demand">
-            <Ionicons name="megaphone" size={18} color={colors.onBrandPrimary} />
-            <Text style={styles.demandHubBtnText}>📢 Fè yon Demand</Text>
-          </Pressable>
-        )}
-
+        {/* Home matches the approved reference exactly: greeting → 2 quick
+            actions (Chèche / Fè yon Demand) → "Tout Sèvis" (5 simple cards,
+            each a single tap to that section) → "Toupre ou" nearby feed.
+            No per-section duplicate browse+demand buttons — Fè yon Demand
+            lives ONCE, at the top, and each category screen has its own
+            demand entry point in its own header (not on Home). */}
         {isClient ? (
           <>
-            {/* Client home is organized into domain sections — each with
-                its OWN "browse" and "make a demand" action, instead of a
-                flat mixed list of buttons. Technician/Biznis Lokal demands
-                reuse the same underlying Alert/Demand system as Product
-                demands (no separate demand system per spec) — they just
-                don't have a matching product category, so no category
-                param is passed for those two; the free-text description
-                the client writes is what conveys what they need.
-                Each section gets its own accent color, matching the
-                reference mockup's color-coded service sections
-                (Pwodwi=violet, Teknisyen=blue, Biznis Lokal=orange,
-                Transpò=teal) rather than one flat uncolored list. */}
-            <View style={[styles.domainCard, { backgroundColor: "#F5F3FF" }]}>
-              <View style={styles.domainCardHeader}>
-                <View style={[styles.domainIconCircle, { backgroundColor: "#8B5CF6" }]}><Ionicons name="cart" size={18} color="#fff" /></View>
-                <Text style={styles.domainCardTitle}>Pwodwi</Text>
-              </View>
-              <View style={styles.domainSection}>
-                <Pressable style={[styles.domainBtn, { backgroundColor: "#8B5CF6" }]} onPress={() => router.push("/browse-products")} testID="dashboard-section-products-browse">
-                  <Ionicons name="search" size={16} color="#fff" />
-                  <Text style={[styles.domainBtnText, { color: "#fff" }]}>Chèche Pwodwi</Text>
-                </Pressable>
-                <Pressable style={[styles.domainBtn, styles.domainBtnOutline]} onPress={() => router.push({ pathname: "/create-alert", params: { category: "phone" } })} testID="dashboard-section-products-demand">
-                  <Ionicons name="megaphone-outline" size={16} color="#8B5CF6" />
-                  <Text style={[styles.domainBtnText, { color: "#8B5CF6" }]}>Fè yon Demand</Text>
-                </Pressable>
-              </View>
+            <Text style={styles.hubQuestion}>Kisa ou vle fè jodi a?</Text>
+            <View style={styles.quickActionRow}>
+              <Pressable style={styles.quickActionPrimary} onPress={() => router.push("/search-results")} testID="dashboard-quick-search">
+                <Ionicons name="search" size={20} color={colors.onBrandPrimary} />
+                <Text style={styles.quickActionPrimaryText}>Chèche</Text>
+              </Pressable>
+              <Pressable style={styles.quickActionSecondary} onPress={() => router.push("/make-a-demand")} testID="dashboard-quick-demand">
+                <Ionicons name="megaphone-outline" size={20} color={colors.onSurface} />
+                <Text style={styles.quickActionSecondaryText}>Fè yon Demand</Text>
+              </Pressable>
             </View>
 
-            <View style={[styles.domainCard, { backgroundColor: "#EFF6FF" }]}>
-              <View style={styles.domainCardHeader}>
-                <View style={[styles.domainIconCircle, { backgroundColor: "#2563EB" }]}><Ionicons name="construct" size={18} color="#fff" /></View>
-                <Text style={styles.domainCardTitle}>Teknisyen</Text>
-              </View>
-              <View style={styles.domainSection}>
-                <Pressable style={[styles.domainBtn, { backgroundColor: "#2563EB" }]} onPress={() => router.push("/browse-technicians")} testID="dashboard-section-tech-browse">
-                  <Ionicons name="construct" size={16} color="#fff" />
-                  <Text style={[styles.domainBtnText, { color: "#fff" }]}>Jwenn Teknisyen</Text>
+            <Text style={styles.sectionTitle}>Tout sèvis</Text>
+            <View style={styles.allServicesGrid}>
+              {[
+                { icon: "cart", label: "Pwodwi", color: "#8B5CF6", onPress: () => router.push("/browse-products") },
+                { icon: "construct", label: "Teknisyen", color: "#2563EB", onPress: () => router.push("/browse-technicians") },
+                { icon: "storefront", label: "Biznis Lokal", color: "#F97316", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/browse?category=business`) },
+                { icon: "bicycle", label: "Transpò & Livrezon", color: "#0891B2", onPress: () => router.push("/request-moto") },
+                { icon: "earth", label: "Founisè", color: "#16A34A", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/suppliers`) },
+              ].map((s, i) => (
+                <Pressable key={i} style={styles.allServicesCard} onPress={s.onPress} testID={`dashboard-allservices-${i}`}>
+                  <View style={[styles.allServicesIcon, { backgroundColor: `${s.color}1A` }]}><Ionicons name={s.icon as any} size={20} color={s.color} /></View>
+                  <Text style={styles.allServicesLabel}>{s.label}</Text>
                 </Pressable>
-                <Pressable style={[styles.domainBtn, styles.domainBtnOutline]} onPress={() => router.push("/create-alert")} testID="dashboard-section-tech-demand">
-                  <Ionicons name="megaphone-outline" size={16} color="#2563EB" />
-                  <Text style={[styles.domainBtnText, { color: "#2563EB" }]}>Fè yon Demand</Text>
-                </Pressable>
-              </View>
+              ))}
             </View>
 
-            <View style={[styles.domainCard, { backgroundColor: "#FFF7ED" }]}>
-              <View style={styles.domainCardHeader}>
-                <View style={[styles.domainIconCircle, { backgroundColor: "#F97316" }]}><Ionicons name="storefront" size={18} color="#fff" /></View>
-                <Text style={styles.domainCardTitle}>Biznis Lokal</Text>
-              </View>
-              <View style={styles.domainSection}>
-                <Pressable style={[styles.domainBtn, { backgroundColor: "#F97316" }]} onPress={() => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/browse?category=business`)} testID="dashboard-section-business-browse">
-                  <Ionicons name="storefront" size={16} color="#fff" />
-                  <Text style={[styles.domainBtnText, { color: "#fff" }]}>Chèche Biznis Lokal</Text>
-                </Pressable>
-                <Pressable style={[styles.domainBtn, styles.domainBtnOutline]} onPress={() => router.push("/create-alert")} testID="dashboard-section-business-demand">
-                  <Ionicons name="megaphone-outline" size={16} color="#F97316" />
-                  <Text style={[styles.domainBtnText, { color: "#F97316" }]}>Fè yon Demand</Text>
-                </Pressable>
-              </View>
-            </View>
-
-            <View style={[styles.domainCard, { backgroundColor: "#ECFEFF" }]}>
-              <View style={styles.domainCardHeader}>
-                <View style={[styles.domainIconCircle, { backgroundColor: "#0891B2" }]}><Ionicons name="bicycle" size={18} color="#fff" /></View>
-                <Text style={styles.domainCardTitle}>Transpò</Text>
-              </View>
-              <View style={styles.domainSection}>
-                <Pressable style={[styles.domainBtn, { backgroundColor: "#0891B2" }]} onPress={() => router.push("/request-moto")} testID="dashboard-section-transport-moto">
-                  <Ionicons name="bicycle" size={16} color="#fff" />
-                  <Text style={[styles.domainBtnText, { color: "#fff" }]}>Mande Moto</Text>
-                </Pressable>
-                <Pressable style={[styles.domainBtn, styles.domainBtnOutline]} onPress={() => router.push("/request-delivery")} testID="dashboard-section-transport-delivery">
-                  <Ionicons name="cube-outline" size={16} color="#0891B2" />
-                  <Text style={[styles.domainBtnText, { color: "#0891B2" }]}>Mande Livrezon</Text>
-                </Pressable>
-              </View>
-            </View>
+            {/* "Toupre ou" — a real recommended-technicians feed (no fake
+                distance figure, since the app doesn't compute GPS distance
+                to each technician here — only what's genuinely available:
+                name, specialty, rating). */}
+            {nearbyTechnicians.length > 0 && (
+              <>
+                <View style={styles.nearbyHeaderRow}>
+                  <Text style={styles.sectionTitle}>Toupre ou</Text>
+                  <Pressable onPress={() => router.push("/browse-technicians")} testID="dashboard-nearby-see-all">
+                    <Text style={styles.nearbySeeAll}>Gade Tout</Text>
+                  </Pressable>
+                </View>
+                {nearbyTechnicians.map((t) => (
+                  <Pressable key={t.username} style={styles.nearbyCard} onPress={() => router.push("/browse-technicians")} testID={`dashboard-nearby-${t.username}`}>
+                    {t.avatar ? (
+                      <Image source={{ uri: t.avatar }} style={styles.nearbyAvatar} />
+                    ) : (
+                      <View style={[styles.nearbyAvatar, styles.nearbyAvatarPlaceholder]}><Ionicons name="person" size={18} color={colors.onSurfaceTertiary} /></View>
+                    )}
+                    <View style={styles.nearbyBody}>
+                      <Text style={styles.nearbyName} numberOfLines={1}>{t.specialties[0] ? `Technicien ${t.specialties[0]}` : t.full_name}</Text>
+                      <Text style={styles.nearbyMeta}>{t.review_count > 0 ? `⭐ ${t.rating.toFixed(1)} (${t.review_count})` : t.city || ""}</Text>
+                    </View>
+                    {t.technician_verified && <View style={styles.nearbyBadge}><Text style={styles.nearbyBadgeText}>Disponib</Text></View>}
+                  </Pressable>
+                ))}
+              </>
+            )}
           </>
         ) : (
-          <View style={styles.quickGrid}>
-            {/* Build the action set from role FLAGS rather than one fixed
+          <>
+            <Text style={styles.hubQuestion}>Kisa ou vle fè jodi a?</Text>
+            <View style={styles.quickGrid}>
+              {/* Build the action set from role FLAGS rather than one fixed
                 array — a pure Technician should never see "Ajoute Pwodwi"
                 (they don't sell products), and TECHNICIAN_SELLER correctly
                 gets both sets rather than only one. */}
@@ -268,7 +254,8 @@ export default function DashboardScreen() {
                 <Text style={styles.quickGridLabel}>{a.label}</Text>
               </Pressable>
             ))}
-          </View>
+            </View>
+          </>
         )}
 
         {/* Summary cards — content differs by role */}
@@ -329,30 +316,6 @@ export default function DashboardScreen() {
               <Text style={styles.quickLabel}>Hot Matches</Text>
             </Pressable>
           </View>
-        )}
-
-        {/* "Tout Sèvis" (Client only) — quick sub-category/other-service
-            shortcuts that AREN'T already covered by the 4 domain sections
-            above (Teknisyen and Biznis Lokal were removed from here since
-            they now live in their own dedicated sections — no service
-            should have two different buttons leading to the same place). */}
-        {isClient && (
-          <>
-            <Text style={styles.sectionTitle}>Lòt Sèvis</Text>
-            <View style={styles.serviceHubRow}>
-              {[
-                { icon: "phone-portrait", label: "Telefòn", color: "#8B5CF6", onPress: () => router.push({ pathname: "/browse-products", params: { category: "phone" } }) },
-                { icon: "laptop", label: "Laptop", color: "#8B5CF6", onPress: () => router.push({ pathname: "/browse-products", params: { category: "laptop" } }) },
-                { icon: "earth", label: "Founisè", color: "#16A34A", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/suppliers`) },
-                { icon: "megaphone", label: "Demand & Òf", color: "#2563EB", onPress: () => router.push("/discover-alerts") },
-              ].map((s, i) => (
-                <Pressable key={i} style={styles.serviceHubItem} onPress={s.onPress} testID={`dashboard-service-${i}`}>
-                  <View style={[styles.serviceHubIcon, { backgroundColor: `${s.color}1A` }]}><Ionicons name={s.icon as any} size={18} color={s.color} /></View>
-                  <Text style={styles.serviceHubLabel}>{s.label}</Text>
-                </Pressable>
-              ))}
-            </View>
-          </>
         )}
 
         {/* Seller/Supplier bridge to website-managed features not yet
@@ -546,28 +509,33 @@ const styles = StyleSheet.create({
   searchBar: { flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: colors.surface, borderRadius: radius.lg, paddingHorizontal: spacing.md, paddingVertical: spacing.sm + 2, marginTop: spacing.lg, ...shadow.card },
   searchBarText: { color: colors.onSurfaceTertiary, fontSize: fontSize.sm },
 
-  demandHubBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.xs, backgroundColor: colors.brandPrimary, borderRadius: radius.lg, paddingVertical: spacing.md, marginTop: spacing.sm },
-  demandHubBtnText: { color: colors.onBrandPrimary, fontSize: fontSize.base, fontFamily: font.medium },
-
   hubQuestion: { fontSize: fontSize.lg, fontFamily: font.medium, color: colors.onSurface, marginTop: spacing.xl, marginBottom: spacing.md },
   quickGrid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
   quickGridItem: { width: "31%", backgroundColor: colors.surface, borderRadius: radius.lg, paddingVertical: spacing.md, alignItems: "center", gap: spacing.xs, ...shadow.card },
   quickGridIcon: { width: 40, height: 40, borderRadius: radius.pill, backgroundColor: colors.brandTertiary, alignItems: "center", justifyContent: "center" },
   quickGridLabel: { fontSize: fontSize.sm, color: colors.onSurface, textAlign: "center", fontFamily: font.medium },
 
-  domainCard: { borderRadius: radius.lg, padding: spacing.md, marginBottom: spacing.md },
-  domainCardHeader: { flexDirection: "row", alignItems: "center", gap: spacing.sm, marginBottom: spacing.sm },
-  domainIconCircle: { width: 34, height: 34, borderRadius: radius.pill, alignItems: "center", justifyContent: "center" },
-  domainCardTitle: { fontSize: fontSize.base, fontFamily: font.medium, color: colors.onSurface },
-  domainSection: { flexDirection: "row", gap: spacing.sm, marginBottom: spacing.lg },
-  domainBtn: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.xs, backgroundColor: colors.brandTertiary, borderRadius: radius.md, paddingVertical: spacing.sm + 2 },
-  domainBtnOutline: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
-  domainBtnText: { fontSize: fontSize.sm, color: colors.brandPrimary, fontFamily: font.medium },
+  quickActionRow: { flexDirection: "row", gap: spacing.sm, marginTop: spacing.md, marginBottom: spacing.xl },
+  quickActionPrimary: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.xs, backgroundColor: colors.brandPrimary, borderRadius: radius.lg, paddingVertical: spacing.lg },
+  quickActionPrimaryText: { color: colors.onBrandPrimary, fontSize: fontSize.base, fontFamily: font.medium },
+  quickActionSecondary: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.xs, backgroundColor: colors.surface, borderRadius: radius.lg, paddingVertical: spacing.lg, borderWidth: 1, borderColor: colors.border },
+  quickActionSecondaryText: { color: colors.onSurface, fontSize: fontSize.base, fontFamily: font.medium },
 
-  serviceHubRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.sm },
-  serviceHubItem: { width: "22%", alignItems: "center", gap: spacing.xs },
-  serviceHubIcon: { width: 44, height: 44, borderRadius: radius.pill, backgroundColor: colors.surface, alignItems: "center", justifyContent: "center", ...shadow.card },
-  serviceHubLabel: { fontSize: 11, color: colors.onSurfaceSecondary, textAlign: "center" },
+  allServicesGrid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginBottom: spacing.xl },
+  allServicesCard: { width: "31%", backgroundColor: colors.surface, borderRadius: radius.lg, paddingVertical: spacing.md, alignItems: "center", gap: spacing.xs, ...shadow.card },
+  allServicesIcon: { width: 44, height: 44, borderRadius: radius.md, alignItems: "center", justifyContent: "center" },
+  allServicesLabel: { fontSize: fontSize.sm, color: colors.onSurface, textAlign: "center", fontFamily: font.medium },
+
+  nearbyHeaderRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  nearbySeeAll: { fontSize: fontSize.sm, color: colors.brandPrimary, fontFamily: font.medium },
+  nearbyCard: { flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.sm, marginTop: spacing.sm, ...shadow.card },
+  nearbyAvatar: { width: 44, height: 44, borderRadius: radius.pill },
+  nearbyAvatarPlaceholder: { backgroundColor: colors.surfaceSecondary, alignItems: "center", justifyContent: "center" },
+  nearbyBody: { flex: 1 },
+  nearbyName: { fontSize: fontSize.sm, fontFamily: font.medium, color: colors.onSurface },
+  nearbyMeta: { fontSize: 12, color: colors.onSurfaceSecondary, marginTop: 2 },
+  nearbyBadge: { backgroundColor: "#DCFCE7", borderRadius: radius.pill, paddingHorizontal: spacing.sm, paddingVertical: 4 },
+  nearbyBadgeText: { fontSize: 11, color: "#16A34A", fontFamily: font.medium },
 
   summaryRow: { flexDirection: "row", gap: spacing.md, marginTop: spacing.xl },
   summaryCard: {
