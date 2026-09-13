@@ -82,6 +82,8 @@ function RootNavigator() {
         <Stack.Screen name="browse-products" />
         <Stack.Screen name="product-details" />
         <Stack.Screen name="browse-technicians" />
+        <Stack.Screen name="search-results" />
+        <Stack.Screen name="make-a-demand" />
         <Stack.Screen name="create-alert" />
         <Stack.Screen name="alert-details" />
         <Stack.Screen name="my-alerts" />
