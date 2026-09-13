@@ -172,53 +172,77 @@ export default function DashboardScreen() {
                 demands (no separate demand system per spec) — they just
                 don't have a matching product category, so no category
                 param is passed for those two; the free-text description
-                the client writes is what conveys what they need. */}
-            <Text style={styles.sectionTitle}>📱 Pwodwi</Text>
-            <View style={styles.domainSection}>
-              <Pressable style={styles.domainBtn} onPress={() => router.push("/browse-products")} testID="dashboard-section-products-browse">
-                <Ionicons name="search" size={16} color={colors.brandPrimary} />
-                <Text style={styles.domainBtnText}>Chèche Pwodwi</Text>
-              </Pressable>
-              <Pressable style={[styles.domainBtn, styles.domainBtnOutline]} onPress={() => router.push({ pathname: "/create-alert", params: { category: "phone" } })} testID="dashboard-section-products-demand">
-                <Ionicons name="megaphone-outline" size={16} color={colors.onSurface} />
-                <Text style={[styles.domainBtnText, { color: colors.onSurface }]}>Fè yon Demand</Text>
-              </Pressable>
+                the client writes is what conveys what they need.
+                Each section gets its own accent color, matching the
+                reference mockup's color-coded service sections
+                (Pwodwi=violet, Teknisyen=blue, Biznis Lokal=orange,
+                Transpò=teal) rather than one flat uncolored list. */}
+            <View style={[styles.domainCard, { backgroundColor: "#F5F3FF" }]}>
+              <View style={styles.domainCardHeader}>
+                <View style={[styles.domainIconCircle, { backgroundColor: "#8B5CF6" }]}><Ionicons name="cart" size={18} color="#fff" /></View>
+                <Text style={styles.domainCardTitle}>Pwodwi</Text>
+              </View>
+              <View style={styles.domainSection}>
+                <Pressable style={[styles.domainBtn, { backgroundColor: "#8B5CF6" }]} onPress={() => router.push("/browse-products")} testID="dashboard-section-products-browse">
+                  <Ionicons name="search" size={16} color="#fff" />
+                  <Text style={[styles.domainBtnText, { color: "#fff" }]}>Chèche Pwodwi</Text>
+                </Pressable>
+                <Pressable style={[styles.domainBtn, styles.domainBtnOutline]} onPress={() => router.push({ pathname: "/create-alert", params: { category: "phone" } })} testID="dashboard-section-products-demand">
+                  <Ionicons name="megaphone-outline" size={16} color="#8B5CF6" />
+                  <Text style={[styles.domainBtnText, { color: "#8B5CF6" }]}>Fè yon Demand</Text>
+                </Pressable>
+              </View>
             </View>
 
-            <Text style={styles.sectionTitle}>🔧 Teknisyen</Text>
-            <View style={styles.domainSection}>
-              <Pressable style={styles.domainBtn} onPress={() => router.push("/browse-technicians")} testID="dashboard-section-tech-browse">
-                <Ionicons name="construct" size={16} color={colors.brandPrimary} />
-                <Text style={styles.domainBtnText}>Jwenn Teknisyen</Text>
-              </Pressable>
-              <Pressable style={[styles.domainBtn, styles.domainBtnOutline]} onPress={() => router.push("/create-alert")} testID="dashboard-section-tech-demand">
-                <Ionicons name="megaphone-outline" size={16} color={colors.onSurface} />
-                <Text style={[styles.domainBtnText, { color: colors.onSurface }]}>Fè yon Demand</Text>
-              </Pressable>
+            <View style={[styles.domainCard, { backgroundColor: "#EFF6FF" }]}>
+              <View style={styles.domainCardHeader}>
+                <View style={[styles.domainIconCircle, { backgroundColor: "#2563EB" }]}><Ionicons name="construct" size={18} color="#fff" /></View>
+                <Text style={styles.domainCardTitle}>Teknisyen</Text>
+              </View>
+              <View style={styles.domainSection}>
+                <Pressable style={[styles.domainBtn, { backgroundColor: "#2563EB" }]} onPress={() => router.push("/browse-technicians")} testID="dashboard-section-tech-browse">
+                  <Ionicons name="construct" size={16} color="#fff" />
+                  <Text style={[styles.domainBtnText, { color: "#fff" }]}>Jwenn Teknisyen</Text>
+                </Pressable>
+                <Pressable style={[styles.domainBtn, styles.domainBtnOutline]} onPress={() => router.push("/create-alert")} testID="dashboard-section-tech-demand">
+                  <Ionicons name="megaphone-outline" size={16} color="#2563EB" />
+                  <Text style={[styles.domainBtnText, { color: "#2563EB" }]}>Fè yon Demand</Text>
+                </Pressable>
+              </View>
             </View>
 
-            <Text style={styles.sectionTitle}>🏪 Biznis Lokal</Text>
-            <View style={styles.domainSection}>
-              <Pressable style={styles.domainBtn} onPress={() => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/browse?category=business`)} testID="dashboard-section-business-browse">
-                <Ionicons name="storefront" size={16} color={colors.brandPrimary} />
-                <Text style={styles.domainBtnText}>Chèche Biznis Lokal</Text>
-              </Pressable>
-              <Pressable style={[styles.domainBtn, styles.domainBtnOutline]} onPress={() => router.push("/create-alert")} testID="dashboard-section-business-demand">
-                <Ionicons name="megaphone-outline" size={16} color={colors.onSurface} />
-                <Text style={[styles.domainBtnText, { color: colors.onSurface }]}>Fè yon Demand</Text>
-              </Pressable>
+            <View style={[styles.domainCard, { backgroundColor: "#FFF7ED" }]}>
+              <View style={styles.domainCardHeader}>
+                <View style={[styles.domainIconCircle, { backgroundColor: "#F97316" }]}><Ionicons name="storefront" size={18} color="#fff" /></View>
+                <Text style={styles.domainCardTitle}>Biznis Lokal</Text>
+              </View>
+              <View style={styles.domainSection}>
+                <Pressable style={[styles.domainBtn, { backgroundColor: "#F97316" }]} onPress={() => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/browse?category=business`)} testID="dashboard-section-business-browse">
+                  <Ionicons name="storefront" size={16} color="#fff" />
+                  <Text style={[styles.domainBtnText, { color: "#fff" }]}>Chèche Biznis Lokal</Text>
+                </Pressable>
+                <Pressable style={[styles.domainBtn, styles.domainBtnOutline]} onPress={() => router.push("/create-alert")} testID="dashboard-section-business-demand">
+                  <Ionicons name="megaphone-outline" size={16} color="#F97316" />
+                  <Text style={[styles.domainBtnText, { color: "#F97316" }]}>Fè yon Demand</Text>
+                </Pressable>
+              </View>
             </View>
 
-            <Text style={styles.sectionTitle}>🏍️ Transpò</Text>
-            <View style={styles.domainSection}>
-              <Pressable style={styles.domainBtn} onPress={() => router.push("/request-moto")} testID="dashboard-section-transport-moto">
-                <Ionicons name="bicycle" size={16} color={colors.brandPrimary} />
-                <Text style={styles.domainBtnText}>Mande Moto</Text>
-              </Pressable>
-              <Pressable style={[styles.domainBtn, styles.domainBtnOutline]} onPress={() => router.push("/request-delivery")} testID="dashboard-section-transport-delivery">
-                <Ionicons name="cube-outline" size={16} color={colors.onSurface} />
-                <Text style={[styles.domainBtnText, { color: colors.onSurface }]}>Mande Livrezon</Text>
-              </Pressable>
+            <View style={[styles.domainCard, { backgroundColor: "#ECFEFF" }]}>
+              <View style={styles.domainCardHeader}>
+                <View style={[styles.domainIconCircle, { backgroundColor: "#0891B2" }]}><Ionicons name="bicycle" size={18} color="#fff" /></View>
+                <Text style={styles.domainCardTitle}>Transpò</Text>
+              </View>
+              <View style={styles.domainSection}>
+                <Pressable style={[styles.domainBtn, { backgroundColor: "#0891B2" }]} onPress={() => router.push("/request-moto")} testID="dashboard-section-transport-moto">
+                  <Ionicons name="bicycle" size={16} color="#fff" />
+                  <Text style={[styles.domainBtnText, { color: "#fff" }]}>Mande Moto</Text>
+                </Pressable>
+                <Pressable style={[styles.domainBtn, styles.domainBtnOutline]} onPress={() => router.push("/request-delivery")} testID="dashboard-section-transport-delivery">
+                  <Ionicons name="cube-outline" size={16} color="#0891B2" />
+                  <Text style={[styles.domainBtnText, { color: "#0891B2" }]}>Mande Livrezon</Text>
+                </Pressable>
+              </View>
             </View>
           </>
         ) : (
@@ -317,13 +341,13 @@ export default function DashboardScreen() {
             <Text style={styles.sectionTitle}>Lòt Sèvis</Text>
             <View style={styles.serviceHubRow}>
               {[
-                { icon: "phone-portrait", label: "Telefòn", onPress: () => router.push({ pathname: "/browse-products", params: { category: "phone" } }) },
-                { icon: "laptop", label: "Laptop", onPress: () => router.push({ pathname: "/browse-products", params: { category: "laptop" } }) },
-                { icon: "earth", label: "Founisè", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/suppliers`) },
-                { icon: "megaphone", label: "Demand & Òf", onPress: () => router.push("/discover-alerts") },
+                { icon: "phone-portrait", label: "Telefòn", color: "#8B5CF6", onPress: () => router.push({ pathname: "/browse-products", params: { category: "phone" } }) },
+                { icon: "laptop", label: "Laptop", color: "#8B5CF6", onPress: () => router.push({ pathname: "/browse-products", params: { category: "laptop" } }) },
+                { icon: "earth", label: "Founisè", color: "#16A34A", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/suppliers`) },
+                { icon: "megaphone", label: "Demand & Òf", color: "#2563EB", onPress: () => router.push("/discover-alerts") },
               ].map((s, i) => (
                 <Pressable key={i} style={styles.serviceHubItem} onPress={s.onPress} testID={`dashboard-service-${i}`}>
-                  <View style={styles.serviceHubIcon}><Ionicons name={s.icon as any} size={18} color={colors.brandPrimary} /></View>
+                  <View style={[styles.serviceHubIcon, { backgroundColor: `${s.color}1A` }]}><Ionicons name={s.icon as any} size={18} color={s.color} /></View>
                   <Text style={styles.serviceHubLabel}>{s.label}</Text>
                 </Pressable>
               ))}
@@ -531,6 +555,10 @@ const styles = StyleSheet.create({
   quickGridIcon: { width: 40, height: 40, borderRadius: radius.pill, backgroundColor: colors.brandTertiary, alignItems: "center", justifyContent: "center" },
   quickGridLabel: { fontSize: fontSize.sm, color: colors.onSurface, textAlign: "center", fontFamily: font.medium },
 
+  domainCard: { borderRadius: radius.lg, padding: spacing.md, marginBottom: spacing.md },
+  domainCardHeader: { flexDirection: "row", alignItems: "center", gap: spacing.sm, marginBottom: spacing.sm },
+  domainIconCircle: { width: 34, height: 34, borderRadius: radius.pill, alignItems: "center", justifyContent: "center" },
+  domainCardTitle: { fontSize: fontSize.base, fontFamily: font.medium, color: colors.onSurface },
   domainSection: { flexDirection: "row", gap: spacing.sm, marginBottom: spacing.lg },
   domainBtn: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.xs, backgroundColor: colors.brandTertiary, borderRadius: radius.md, paddingVertical: spacing.sm + 2 },
   domainBtnOutline: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
