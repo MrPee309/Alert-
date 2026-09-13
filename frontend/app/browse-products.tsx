@@ -36,6 +36,9 @@ export default function BrowseProductsScreen() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState(initialCategory || "");
   const [products, setProducts] = useState<DealLakayProduct[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [demands, setDemands] = useState<DealAlert[]>([]);
   const [favorited, setFavorited] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
@@ -44,15 +47,33 @@ export default function BrowseProductsScreen() {
     setLoading(true);
     try {
       const [productRes, demandRes] = await Promise.all([
-        productsApi.list({ q: q || undefined, category: cat || undefined }).catch(() => ({ products: [] as DealLakayProduct[] })),
+        productsApi.list({ q: q || undefined, category: cat || undefined }).catch(() => ({ products: [] as DealLakayProduct[], page: 1, pages: 1 })),
         dealAlertsApi.discover({ category: cat || undefined, alertType: "DEMAND" }).catch(() => [] as DealAlert[]),
       ]);
       setProducts(productRes.products);
+      setPage(productRes.page);
+      setTotalPages(productRes.pages);
       setDemands(demandRes.slice(0, 3));
     } finally {
       setLoading(false);
     }
   }, []);
+
+  // "Chaje Plis" — appends the next page rather than re-fetching/
+  // re-rendering everything already on screen, and rather than fetching
+  // the whole catalog in one request (per spec section 28: don't load
+  // the entire database at once, use pagination).
+  const loadMore = useCallback(async () => {
+    if (loadingMore || page >= totalPages) return;
+    setLoadingMore(true);
+    try {
+      const res = await productsApi.list({ q: query || undefined, category: category || undefined, page: page + 1 });
+      setProducts((prev) => [...prev, ...res.products]);
+      setPage(res.page);
+    } catch { /* stays on current page — user can tap again */ } finally {
+      setLoadingMore(false);
+    }
+  }, [loadingMore, page, totalPages, query, category]);
 
   useFocusEffect(useCallback(() => { load(query, category); }, [category]));
 
@@ -112,28 +133,37 @@ export default function BrowseProductsScreen() {
     </>
   );
 
-  const footer = demands.length > 0 ? (
+  const footer = (
     <>
-      <View style={styles.sectionHeaderRow}>
-        <Text style={styles.sectionTitle}>Demand ki ka enterese w</Text>
-        <Pressable onPress={() => router.push("/discover-alerts")} testID="browse-products-demands-see-all">
-          <Text style={styles.sectionLink}>Gade tout</Text>
+      {page < totalPages && (
+        <Pressable style={styles.loadMoreBtn} onPress={loadMore} disabled={loadingMore} testID="browse-products-load-more">
+          {loadingMore ? <ActivityIndicator color={colors.brandPrimary} /> : <Text style={styles.loadMoreBtnText}>Chaje Plis</Text>}
         </Pressable>
-      </View>
-      {demands.map((d) => (
-        <Pressable key={d.id} style={styles.demandCard} onPress={() => router.push({ pathname: "/alert-details", params: { id: d.id } })} testID={`browse-products-demand-${d.id}`}>
-          <View style={styles.demandIconWrap}><Ionicons name="search" size={16} color={colors.brandPrimary} /></View>
-          <View style={styles.demandBody}>
-            <Text style={styles.demandTitle} numberOfLines={1}>{demandLabel(d)}</Text>
-            <Text style={styles.demandMeta}>
-              {[d.department, d.city].filter(Boolean).join(", ") || "Tout Ayiti"}
-              {d.response_count != null && d.response_count > 0 ? ` · ${d.response_count} repons` : ""}
-            </Text>
+      )}
+      {demands.length > 0 && (
+        <>
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionTitle}>Demand ki ka enterese w</Text>
+            <Pressable onPress={() => router.push("/discover-alerts")} testID="browse-products-demands-see-all">
+              <Text style={styles.sectionLink}>Gade tout</Text>
+            </Pressable>
           </View>
-        </Pressable>
-      ))}
+          {demands.map((d) => (
+            <Pressable key={d.id} style={styles.demandCard} onPress={() => router.push({ pathname: "/alert-details", params: { id: d.id } })} testID={`browse-products-demand-${d.id}`}>
+              <View style={styles.demandIconWrap}><Ionicons name="search" size={16} color={colors.brandPrimary} /></View>
+              <View style={styles.demandBody}>
+                <Text style={styles.demandTitle} numberOfLines={1}>{demandLabel(d)}</Text>
+                <Text style={styles.demandMeta}>
+                  {[d.department, d.city].filter(Boolean).join(", ") || "Tout Ayiti"}
+                  {d.response_count != null && d.response_count > 0 ? ` · ${d.response_count} repons` : ""}
+                </Text>
+              </View>
+            </Pressable>
+          ))}
+        </>
+      )}
     </>
-  ) : null;
+  );
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
@@ -219,6 +249,8 @@ const styles = StyleSheet.create({
   chipTextActive: { color: colors.onBrandPrimary, fontFamily: font.medium },
   sectionTitle: { fontSize: fontSize.base, fontFamily: font.medium, color: colors.onSurface, marginBottom: spacing.sm },
   sectionHeaderRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: spacing.xl, marginBottom: spacing.sm },
+  loadMoreBtn: { alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.brandPrimary, borderRadius: radius.pill, paddingVertical: spacing.sm, marginTop: spacing.md },
+  loadMoreBtnText: { color: colors.brandPrimary, fontSize: fontSize.sm, fontFamily: font.medium },
   sectionLink: { fontSize: fontSize.sm, color: colors.brandPrimary, fontFamily: font.medium },
   emptyBox: { alignItems: "center", gap: spacing.sm, marginTop: spacing.xl },
   emptyInline: { fontSize: fontSize.sm, color: colors.onSurfaceSecondary, textAlign: "center" },
