@@ -20,6 +20,7 @@ export default function BrowseProductsScreen() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState(initialCategory || "");
   const [items, setItems] = useState<DealLakayProduct[]>([]);
+  const [favorited, setFavorited] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
 
   const search = useCallback(async (q: string, cat: string) => {
@@ -89,6 +90,13 @@ export default function BrowseProductsScreen() {
               ) : (
                 <View style={[styles.cardImage, styles.cardImagePlaceholder]}><Ionicons name="image-outline" size={24} color={colors.onSurfaceTertiary} /></View>
               )}
+              <Pressable
+                style={styles.favoriteBtn}
+                onPress={() => { productsApi.toggleFavorite(item.id).catch(() => {}); setFavorited((f) => ({ ...f, [item.id]: !f[item.id] })); }}
+                testID={`browse-product-favorite-${item.id}`}
+              >
+                <Ionicons name={favorited[item.id] ? "heart" : "heart-outline"} size={18} color={favorited[item.id] ? "#EF4444" : colors.onSurfaceSecondary} />
+              </Pressable>
               <Text style={styles.cardTitle} numberOfLines={1}>{item.title}</Text>
               <Text style={styles.cardPrice}>{item.price.toLocaleString()} HTG</Text>
               <Text style={styles.cardLocation} numberOfLines={1}>{item.city}</Text>
@@ -117,6 +125,7 @@ const styles = StyleSheet.create({
   card: { flex: 1, backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.sm, ...shadow.card },
   cardImage: { width: "100%", height: 110, borderRadius: radius.md, marginBottom: spacing.xs },
   cardImagePlaceholder: { backgroundColor: colors.surfaceSecondary, alignItems: "center", justifyContent: "center" },
+  favoriteBtn: { position: "absolute", top: spacing.xs + 4, right: spacing.xs + 4, width: 30, height: 30, borderRadius: radius.pill, backgroundColor: "rgba(255,255,255,0.9)", alignItems: "center", justifyContent: "center" },
   cardTitle: { fontSize: fontSize.sm, color: colors.onSurface, fontFamily: font.medium },
   cardPrice: { fontSize: fontSize.sm, color: colors.brandPrimary, fontFamily: font.medium, marginTop: 2 },
   cardLocation: { fontSize: 11, color: colors.onSurfaceTertiary, marginTop: 2 },
