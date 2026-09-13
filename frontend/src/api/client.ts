@@ -67,16 +67,25 @@ async function rawRequest<T>(path: string, opts: RequestOptions): Promise<T> {
     if (token) headers.Authorization = `Bearer ${token}`;
   }
 
-  const res = await withTimeout(
-    (signal) =>
-      fetch(`${DEALLAKAY_API_URL}${path}`, {
-        method: opts.method ?? "GET",
-        headers,
-        body: opts.body ? JSON.stringify(opts.body) : undefined,
-        signal: opts.signal ?? signal,
-      }),
-    NETWORK.timeoutMs,
-  );
+  let res: Response;
+  try {
+    res = await withTimeout(
+      (signal) =>
+        fetch(`${DEALLAKAY_API_URL}${path}`, {
+          method: opts.method ?? "GET",
+          headers,
+          body: opts.body ? JSON.stringify(opts.body) : undefined,
+          signal: opts.signal ?? signal,
+        }),
+      NETWORK.timeoutMs,
+    );
+  } catch (err) {
+    // A thrown fetch (not an HTTP error response) means no connection at
+    // all, DNS failure, or the timeout aborted it — never show the raw
+    // JS error ("TypeError: Network request failed", "AbortError") to a
+    // normal user, per spec section 29.
+    throw new ApiError("Ou pa gen koneksyon entènèt. Tcheke koneksyon w epi eseye ankò.", 0);
+  }
 
   if (!res.ok) {
     let detail = res.statusText;
