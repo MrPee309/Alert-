@@ -223,11 +223,20 @@ export default function DashboardScreen() {
           </>
         ) : (
           <View style={styles.quickGrid}>
-            {(isPro ? [
-              { icon: "add-circle", label: "Ajoute Pwodwi", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/sell`) },
+            {/* Build the action set from role FLAGS rather than one fixed
+                array — a pure Technician should never see "Ajoute Pwodwi"
+                (they don't sell products), and TECHNICIAN_SELLER correctly
+                gets both sets rather than only one. */}
+            {(isSupplier ? [
+              { icon: "globe", label: "Sit Founisè Mwen", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/suppliers`) },
               { icon: "chatbubbles", label: "Messenger", onPress: () => router.push("/messenger") },
             ] : [
-              { icon: "globe", label: "Sit Founisè Mwen", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/suppliers`) },
+              ...(role === "SELLER" || role === "TECHNICIAN_SELLER" ? [
+                { icon: "add-circle", label: "Ajoute Pwodwi", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/sell`) },
+              ] : []),
+              ...(role === "TECHNICIAN" || role === "TECHNICIAN_SELLER" ? [
+                { icon: "construct", label: "Sèvis Mwen", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/technician-dashboard`) },
+              ] : []),
               { icon: "chatbubbles", label: "Messenger", onPress: () => router.push("/messenger") },
             ]).map((a, i) => (
               <Pressable key={i} style={styles.quickGridItem} onPress={a.onPress} testID={`dashboard-quick-${i}`}>
@@ -332,6 +341,17 @@ export default function DashboardScreen() {
           >
             <Ionicons name="storefront-outline" size={18} color={colors.brandPrimary} />
             <Text style={styles.websiteBridgeText}>Jere Pwodwi Ou sou Sit DealLakay la</Text>
+            <Ionicons name="open-outline" size={16} color={colors.onSurfaceTertiary} />
+          </Pressable>
+        )}
+        {(role === "TECHNICIAN" || role === "TECHNICIAN_SELLER") && (
+          <Pressable
+            style={styles.websiteBridge}
+            onPress={() => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/technician-dashboard`)}
+            testID="dashboard-manage-services"
+          >
+            <Ionicons name="construct-outline" size={18} color={colors.brandPrimary} />
+            <Text style={styles.websiteBridgeText}>Jere Sèvis Ou sou Sit DealLakay la</Text>
             <Ionicons name="open-outline" size={16} color={colors.onSurfaceTertiary} />
           </Pressable>
         )}
