@@ -15,6 +15,7 @@ export default function RequestMotoScreen() {
   const [destination, setDestination] = useState("");
   const [passengers, setPassengers] = useState("1");
   const [notes, setNotes] = useState("");
+  const [reason, setReason] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const useCurrentLocation = async () => {
@@ -48,6 +49,7 @@ export default function RequestMotoScreen() {
         destination_address: destination.trim(),
         passenger_count: Number(passengers) || 1,
         notes: notes.trim(),
+        reason,
       });
       router.replace({ pathname: "/searching-driver", params: { id: req.id } });
     } catch (e: any) {
@@ -80,6 +82,15 @@ export default function RequestMotoScreen() {
         <Text style={[styles.label, { marginTop: spacing.lg }]}>Destinasyon</Text>
         <TextInput style={styles.input} value={destination} onChangeText={setDestination} placeholder="egzanp: Pétion-Ville" testID="request-moto-destination" />
 
+        <Text style={[styles.label, { marginTop: spacing.lg }]}>Rezon (opsyonèl)</Text>
+        <View style={styles.reasonRow}>
+          {["Komisyon", "Travay", "Lakay", "Lopital", "Livrezon", "Lòt"].map((r) => (
+            <Pressable key={r} onPress={() => setReason(r)} style={[styles.reasonChip, reason === r && styles.reasonChipActive]} testID={`request-moto-reason-${r}`}>
+              <Text style={[styles.reasonChipText, reason === r && styles.reasonChipTextActive]}>{r}</Text>
+            </Pressable>
+          ))}
+        </View>
+
         <Text style={[styles.label, { marginTop: spacing.lg }]}>Kantite Pasaje</Text>
         <TextInput style={styles.input} value={passengers} onChangeText={setPassengers} keyboardType="number-pad" testID="request-moto-passengers" />
 
@@ -103,6 +114,11 @@ const styles = StyleSheet.create({
   input: { backgroundColor: colors.surface, borderRadius: radius.md, borderWidth: 1, borderColor: colors.border, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, fontSize: fontSize.base, color: colors.onSurface },
   locBtn: { flexDirection: "row", alignItems: "center", gap: spacing.xs, marginTop: spacing.sm, alignSelf: "flex-start" },
   locBtnText: { fontSize: fontSize.sm, color: colors.brandPrimary, fontFamily: font.medium },
+  reasonRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.xs },
+  reasonChip: { paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radius.pill, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
+  reasonChipActive: { backgroundColor: colors.brandPrimary, borderColor: colors.brandPrimary },
+  reasonChipText: { fontSize: fontSize.sm, color: colors.onSurface },
+  reasonChipTextActive: { color: colors.onBrandPrimary, fontFamily: font.medium },
   submitBtn: { backgroundColor: colors.brandPrimary, borderRadius: radius.pill, paddingVertical: spacing.md, alignItems: "center", marginTop: spacing.xl },
   submitText: { color: colors.onBrandPrimary, fontSize: fontSize.base, fontFamily: font.medium },
 });
