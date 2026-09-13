@@ -80,9 +80,9 @@ function RootNavigator() {
         <Stack.Screen name="active-trip" />
         <Stack.Screen name="transport-history" />
         <Stack.Screen name="browse-products" />
-        <Stack.Screen name="browse-products-list" />
         <Stack.Screen name="product-details" />
         <Stack.Screen name="browse-technicians" />
+        <Stack.Screen name="transport-category" />
         <Stack.Screen name="search-results" />
         <Stack.Screen name="favorites" />
         <Stack.Screen name="make-a-demand" />
