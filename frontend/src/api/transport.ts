@@ -59,6 +59,7 @@ export interface TransportRequestInput {
   destination_lng?: number;
   passenger_count?: number;
   package_description?: string;
+  reason?: string;
   notes?: string;
   related_product_id?: string;
   related_request_id?: string;
@@ -73,6 +74,8 @@ export interface TransportRequest {
   destination_address: string;
   passenger_count: number | null;
   package_description: string;
+  reason: string;
+  agreed_price: number | null;
   notes: string;
   related_product_id: string | null;
   related_request_id: string | null;
@@ -119,4 +122,7 @@ export const transportApi = {
   completeTrip: (id: string) => apiClient.post<TransportRequest>(`/transport/requests/${id}/complete`),
 
   history: () => apiClient.get<TransportRequest[]>("/transport/history"),
+
+  agreePrice: (id: string, price: number) =>
+    apiClient.post<TransportRequest>(`/transport/requests/${id}/agree-price`, { price }),
 };
