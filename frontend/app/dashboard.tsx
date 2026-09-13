@@ -9,7 +9,6 @@ import {
   ActivityIndicator,
   Linking,
   Image,
-  Alert,
 } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -184,13 +183,7 @@ export default function DashboardScreen() {
                 { icon: "cart", label: "Pwodwi", color: "#8B5CF6", onPress: () => router.push("/browse-products") },
                 { icon: "construct", label: "Teknisyen", color: "#2563EB", onPress: () => router.push("/browse-technicians") },
                 { icon: "storefront", label: "Biznis Lokal", color: "#F97316", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/browse?category=business`) },
-                { icon: "bicycle", label: "Transpò & Livrezon", color: "#0891B2", onPress: () => {
-                  Alert.alert("Transpò & Livrezon", "Kisa ou bezwen?", [
-                    { text: "🏍️ Moto Taxi", onPress: () => router.push("/request-moto") },
-                    { text: "📦 Livrezon", onPress: () => router.push("/request-delivery") },
-                    { text: "Anile", style: "cancel" },
-                  ]);
-                } },
+                { icon: "bicycle", label: "Transpò & Livrezon", color: "#0891B2", onPress: () => router.push("/transport-category") },
                 { icon: "earth", label: "Founisè", color: "#16A34A", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/suppliers`) },
               ].map((s, i) => (
                 <Pressable key={i} style={styles.allServicesCard} onPress={s.onPress} testID={`dashboard-allservices-${i}`}>
