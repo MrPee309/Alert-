@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Linking,
   Image,
+  Alert,
 } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -19,7 +20,6 @@ import { useAuth } from "@/src/context/auth-context";
 import { useUserRole } from "@/src/hooks/use-user-role";
 import { dealAlertsApi, type DealAlert } from "@/src/api/deal-alerts";
 import { alertsApi } from "@/src/api/alerts";
-import { transportApi } from "@/src/api/transport";
 import { techniciansApi, type DealLakayTechnician } from "@/src/api/technicians";
 import { WEBSITE_URL } from "@/src/constants/config";
 import type { AppNotification } from "@/src/types";
@@ -52,8 +52,7 @@ export default function DashboardScreen() {
   const [responseCount, setResponseCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [isDriver, setIsDriver] = useState(false);
-  const [nearbyTechnicians, setNearbyTechnicians] = useState<DealLakayTechnician[]>([]);
+    const [nearbyTechnicians, setNearbyTechnicians] = useState<DealLakayTechnician[]>([]);
 
   const isClient = role === "CLIENT";
   const isSupplier = role === "SUPPLIER";
@@ -70,7 +69,8 @@ export default function DashboardScreen() {
       // Whether the user already has ANY driver profile (pending or
       // verified) — decides if the Transpò card says "Vin Chofè Moto" or
       // "Dashboard Chofè Mwen". A 404 here just means no profile yet.
-      transportApi.myDriverProfile().then(() => setIsDriver(true)).catch(() => setIsDriver(false));
+      // (driver-profile lookup moved to Profile.tsx, where the "Vin
+      // Chofè"/"Dashboard Chofè" link now lives)
 
       if (isClient) {
         techniciansApi.list({ sort: "recommended" }).then((res) => setNearbyTechnicians(res.technicians.slice(0, 3))).catch(() => setNearbyTechnicians([]));
@@ -135,20 +135,13 @@ export default function DashboardScreen() {
         contentContainerStyle={styles.scrollContent}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor={colors.brandPrimary} />}
       >
-        {/* Header */}
+        {/* Header — app wordmark (no logo image file exists in this
+            project's assets, so a styled text wordmark is used, matching
+            the same "Deal" + "Lakay" two-tone style the website uses)
+            replaces the old greeting-in-header layout. The name/greeting
+            now sits right above "Kisa ou vle fè jodi a?" instead. */}
         <View style={styles.header}>
-          <View style={styles.headerText}>
-            <Text style={styles.greeting}>Bonjou, {user?.fullName?.split(" ")[0] || "zanmi"} {
-              role === "TECHNICIAN" ? "👋🔧" :
-              role === "SELLER" ? "👋🛍️" :
-              role === "TECHNICIAN_SELLER" ? "👋🔧🛍️" :
-              role === "SUPPLIER" ? "👋🌎" :
-              "👋"
-            }</Text>
-            <View style={[styles.roleBadge, { backgroundColor: roleColors[0] + "22" }]}>
-              <Text style={[styles.roleBadgeText, { color: roleColors[1] }]}>{roleLabel}</Text>
-            </View>
-          </View>
+          <Text style={styles.wordmark}>Deal<Text style={styles.wordmarkAccent}>Lakay</Text></Text>
           <NotificationBell />
         </View>
 
@@ -172,6 +165,7 @@ export default function DashboardScreen() {
             demand entry point in its own header (not on Home). */}
         {isClient ? (
           <>
+            <Text style={styles.greeting}>Bonjou, {user?.fullName?.split(" ")[0] || "zanmi"} 👋</Text>
             <Text style={styles.hubQuestion}>Kisa ou vle fè jodi a?</Text>
             <View style={styles.quickActionRow}>
               <Pressable style={styles.quickActionPrimary} onPress={() => router.push("/search-results")} testID="dashboard-quick-search">
@@ -190,7 +184,13 @@ export default function DashboardScreen() {
                 { icon: "cart", label: "Pwodwi", color: "#8B5CF6", onPress: () => router.push("/browse-products") },
                 { icon: "construct", label: "Teknisyen", color: "#2563EB", onPress: () => router.push("/browse-technicians") },
                 { icon: "storefront", label: "Biznis Lokal", color: "#F97316", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/browse?category=business`) },
-                { icon: "bicycle", label: "Transpò & Livrezon", color: "#0891B2", onPress: () => router.push("/request-moto") },
+                { icon: "bicycle", label: "Transpò & Livrezon", color: "#0891B2", onPress: () => {
+                  Alert.alert("Transpò & Livrezon", "Kisa ou bezwen?", [
+                    { text: "🏍️ Moto Taxi", onPress: () => router.push("/request-moto") },
+                    { text: "📦 Livrezon", onPress: () => router.push("/request-delivery") },
+                    { text: "Anile", style: "cancel" },
+                  ]);
+                } },
                 { icon: "earth", label: "Founisè", color: "#16A34A", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/suppliers`) },
               ].map((s, i) => (
                 <Pressable key={i} style={styles.allServicesCard} onPress={s.onPress} testID={`dashboard-allservices-${i}`}>
@@ -231,6 +231,13 @@ export default function DashboardScreen() {
           </>
         ) : (
           <>
+            <Text style={styles.greeting}>Bonjou, {user?.fullName?.split(" ")[0] || "zanmi"} {
+              role === "TECHNICIAN" ? "👋🔧" :
+              role === "SELLER" ? "👋🛍️" :
+              role === "TECHNICIAN_SELLER" ? "👋🔧🛍️" :
+              role === "SUPPLIER" ? "👋🌎" :
+              "👋"
+            }</Text>
             <Text style={styles.hubQuestion}>Kisa ou vle fè jodi a?</Text>
             <View style={styles.quickGrid}>
               {/* Build the action set from role FLAGS rather than one fixed
@@ -354,90 +361,6 @@ export default function DashboardScreen() {
           </Pressable>
         )}
 
-        {/* Transpò & Livrezon — Phase 3: client-facing request buttons now
-            link to real screens (request-moto/request-delivery), matching
-            the original spec's example layout. Driver registration/
-            dashboard access stays as a secondary link below, exactly as
-            specified — this card is not a 5th BottomNav tab. */}
-        <View style={styles.transportCard} testID="dashboard-transport-card">
-          <View style={styles.transportHeaderRow}>
-            <Ionicons name="bicycle" size={20} color={colors.brandPrimary} />
-            <Text style={styles.transportTitle}>Transpò & Livrezon</Text>
-          </View>
-          <Text style={styles.transportSubtitle}>Jwenn yon moto oswa voye yon kolis rapidman.</Text>
-          {/* Client already has a dedicated "🏍️ Transpò" section above with
-              these same two buttons — showing them again here would be
-              the exact duplicate the reorganization was meant to remove.
-              Pro/Supplier have no dedicated transport section, so they
-              keep quick access here. */}
-          {!isClient && (
-            <View style={{ flexDirection: "row", gap: spacing.sm, marginTop: spacing.md }}>
-              <Pressable style={[styles.transportBtn, { flex: 1, marginTop: 0 }]} onPress={() => router.push("/request-moto")} testID="dashboard-request-moto">
-                <Text style={styles.transportBtnText}>M Bezwen Yon Moto</Text>
-              </Pressable>
-              <Pressable style={[styles.transportBtn, { flex: 1, marginTop: 0, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }]} onPress={() => router.push("/request-delivery")} testID="dashboard-request-delivery">
-                <Text style={[styles.transportBtnText, { color: colors.onSurface }]}>Fè Livrezon</Text>
-              </Pressable>
-            </View>
-          )}
-          <Pressable
-            style={styles.transportDriverLink}
-            onPress={() => router.push(isDriver ? "/driver-dashboard" : "/become-driver")}
-            testID="dashboard-transport-cta"
-          >
-            <Text style={styles.transportDriverLinkText}>{isDriver ? "Dashboard Chofè Mwen" : "Vin Chofè Moto"}</Text>
-          </Pressable>
-          <Pressable style={styles.transportDriverLink} onPress={() => router.push("/transport-history")} testID="dashboard-transport-history">
-            <Text style={styles.transportDriverLinkText}>Istwa Transpò Mwen</Text>
-          </Pressable>
-        </View>
-
-        {/* Primary alert list — label changes by role */}
-        <View style={styles.sectionHeaderRow}>
-          <Text style={styles.sectionTitle}>
-            {isClient ? "Demann Mwen" : isSupplier ? "Òf Mwen" : "Alèt Mwen"}
-          </Text>
-          <Pressable onPress={() => router.push("/my-alerts")} testID="dashboard-see-all-alerts">
-            <Text style={styles.sectionLink}>Wè tout</Text>
-          </Pressable>
-        </View>
-
-        {primaryList.length === 0 ? (
-          <EmptyState
-            icon="notifications-off-outline"
-            title={isClient ? "Ou poko gen okenn Demann." : isSupplier ? "Ou poko gen okenn Òf." : "Ou poko gen okenn alèt aktif."}
-            subtitle="Kreye premye alèt ou pou kòmanse jwenn deal otomatikman."
-            actionLabel={isClient ? "Kreye yon Demann" : isSupplier ? "Kreye yon Òf" : "Kreye yon Alèt"}
-            onAction={() => router.push("/create-alert")}
-          />
-        ) : (
-          primaryList.slice(0, 3).map((a) => (
-            <Pressable
-              key={a.id}
-              style={styles.alertCard}
-              onPress={() => router.push({ pathname: "/alert-details", params: { id: a.id } })}
-              testID={`dashboard-alert-${a.id}`}
-            >
-              <View style={styles.alertIconWrap}>
-                <Ionicons name={a.alert_type === "OFFER" ? "cube" : "search"} size={18} color={colors.brandPrimary} />
-              </View>
-              <View style={styles.alertCardBody}>
-                <View style={styles.alertCardTitleRow}>
-                  <View style={[styles.typeBadge, a.alert_type === "OFFER" ? styles.typeBadgeOffer : styles.typeBadgeDemand]}>
-                    <Text style={styles.typeBadgeText}>{a.alert_type === "OFFER" ? "ÒF" : "DEMANN"}</Text>
-                  </View>
-                  <Text style={styles.alertCardTitle} numberOfLines={1}>{alertLabel(a)}</Text>
-                </View>
-                <Text style={styles.alertCardMeta}>
-                  {a.max_price ? `Max: $${a.max_price} · ` : ""}
-                  {[a.department, a.city].filter(Boolean).join(", ") || "Tout Ayiti"}
-                </Text>
-              </View>
-              <View style={styles.activeDot} />
-            </Pressable>
-          ))
-        )}
-
         {/* Recent activity */}
         <View style={styles.sectionHeaderRow}>
           <Text style={styles.sectionTitle}>Aktivite Resan</Text>
@@ -499,9 +422,11 @@ const styles = StyleSheet.create({
   loadingContainer: { flex: 1, backgroundColor: colors.surfaceSecondary, alignItems: "center", justifyContent: "center" },
   scrollContent: { padding: spacing.lg, paddingBottom: spacing["3xl"] },
 
-  header: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between" },
+  header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   headerText: { flex: 1 },
   greeting: { fontSize: fontSize.xl, fontFamily: font.medium, color: colors.onSurface },
+  wordmark: { fontSize: fontSize.xl, fontFamily: font.bold ?? font.medium, color: colors.onSurface },
+  wordmarkAccent: { color: colors.brandPrimary },
   subtitle: { fontSize: fontSize.sm, color: colors.onSurfaceSecondary, marginTop: 2 },
   roleBadge: { alignSelf: "flex-start", backgroundColor: colors.brandTertiary, borderRadius: radius.pill, paddingHorizontal: spacing.sm, paddingVertical: 2, marginTop: spacing.xs },
   roleBadgeText: { color: colors.onBrandTertiary, fontSize: fontSize.sm, fontFamily: font.medium },
