@@ -38,9 +38,11 @@ export default function BrowseTechniciansScreen() {
   const [items, setItems] = useState<DealLakayTechnician[]>([]);
   const [favorited, setFavorited] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const search = useCallback(async (q: string, spec: string, nearMe: boolean) => {
     setLoading(true);
+    setError(null);
     try {
       // "Pi pre kliyan" — no GPS coordinates exist for technician profiles
       // yet (only city/department text), so proximity is approximated by
@@ -48,7 +50,13 @@ export default function BrowseTechniciansScreen() {
       // real distance calculation.
       const res = await techniciansApi.list({ q: q || undefined, specialty: spec || undefined, city: nearMe && user?.city ? user.city : undefined, sort: "recommended" });
       setItems(res.technicians);
-    } catch { /* keep last results on transient failure */ } finally {
+    } catch (e: any) {
+      // FIXED: this used to silently swallow any error, leaving "items"
+      // at its previous (often empty) value with no indication anything
+      // went wrong — showed as "no technicians" even for a real failure.
+      setError(e?.message || "Nou pa t ka chaje teknisyen yo.");
+      setItems([]);
+    } finally {
       setLoading(false);
     }
   }, []);
@@ -125,21 +133,32 @@ export default function BrowseTechniciansScreen() {
           contentContainerStyle={styles.listContent}
           ListHeaderComponent={header}
           ListEmptyComponent={
-            <View style={styles.emptyBox}>
-              <Ionicons name="construct-outline" size={40} color={colors.onSurfaceTertiary} />
-              <Text style={styles.emptyText}>Pa gen teknisyen ki matche rechèch ou a.</Text>
-              <Pressable
-                style={styles.notifyMeBtn}
-                onPress={() => {
-                  notifyMeApi.subscribe({ kind: "technician", specialty: specialty || undefined }).catch(() => {});
-                  Alert.alert("Nap Avize W", "N ap avize w lè yon teknisyen disponib pou espesyalite sa a.");
-                }}
-                testID="browse-technicians-notify-me"
-              >
-                <Ionicons name="notifications-outline" size={16} color={colors.brandPrimary} />
-                <Text style={styles.notifyMeBtnText}>Avèti mwen lè li disponib</Text>
-              </Pressable>
-            </View>
+            error ? (
+              <View style={styles.emptyBox}>
+                <Ionicons name="warning-outline" size={40} color="#DC2626" />
+                <Text style={[styles.emptyText, { color: "#DC2626" }]}>{error}</Text>
+                <Pressable style={styles.notifyMeBtn} onPress={() => search(query, specialty, nearMeOnly)} testID="browse-technicians-retry">
+                  <Ionicons name="refresh" size={16} color={colors.brandPrimary} />
+                  <Text style={styles.notifyMeBtnText}>Eseye Ankò</Text>
+                </Pressable>
+              </View>
+            ) : (
+              <View style={styles.emptyBox}>
+                <Ionicons name="construct-outline" size={40} color={colors.onSurfaceTertiary} />
+                <Text style={styles.emptyText}>Pa gen teknisyen ki matche rechèch ou a.</Text>
+                <Pressable
+                  style={styles.notifyMeBtn}
+                  onPress={() => {
+                    notifyMeApi.subscribe({ kind: "technician", specialty: specialty || undefined }).catch(() => {});
+                    Alert.alert("Nap Avize W", "N ap avize w lè yon teknisyen disponib pou espesyalite sa a.");
+                  }}
+                  testID="browse-technicians-notify-me"
+                >
+                  <Ionicons name="notifications-outline" size={16} color={colors.brandPrimary} />
+                  <Text style={styles.notifyMeBtnText}>Avèti mwen lè li disponib</Text>
+                </Pressable>
+              </View>
+            )
           }
           renderItem={({ item }) => (
             <Pressable
