@@ -152,30 +152,80 @@ export default function DashboardScreen() {
           <Text style={styles.searchBarText}>Chèche pwodwi, sèvis, teknisyen...</Text>
         </Pressable>
 
-        {/* Universal Quick Actions hub — role-aware, per the "what do you
-            want to do today" principle. Actions with an existing native
-            screen link there directly; actions the mobile app doesn't
-            have a native screen for (product search, technician browsing,
-            local business browsing) bridge to the equivalent website page
-            rather than inventing a fake native flow. */}
-        <Text style={styles.hubQuestion}>Kisa ou vle fè jodi a?</Text>
-        <View style={styles.quickGrid}>
-          {(isClient ? [
-            { icon: "search", label: "Chèche Pwodwi", onPress: () => router.push("/browse-products") },
-            { icon: "megaphone", label: "Fè yon Demand", onPress: () => router.push("/create-alert") },
-          ] : isPro ? [
-            { icon: "add-circle", label: "Ajoute Pwodwi", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/sell`) },
-            { icon: "chatbubbles", label: "Messenger", onPress: () => router.push("/messenger") },
-          ] : [
-            { icon: "globe", label: "Sit Founisè Mwen", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/suppliers`) },
-            { icon: "chatbubbles", label: "Messenger", onPress: () => router.push("/messenger") },
-          ]).map((a, i) => (
-            <Pressable key={i} style={styles.quickGridItem} onPress={a.onPress} testID={`dashboard-quick-${i}`}>
-              <View style={styles.quickGridIcon}><Ionicons name={a.icon as any} size={20} color={colors.brandPrimary} /></View>
-              <Text style={styles.quickGridLabel}>{a.label}</Text>
-            </Pressable>
-          ))}
-        </View>
+        {isClient ? (
+          <>
+            {/* Client home is organized into domain sections — each with
+                its OWN "browse" and "make a demand" action, instead of a
+                flat mixed list of buttons. Technician/Biznis Lokal demands
+                reuse the same underlying Alert/Demand system as Product
+                demands (no separate demand system per spec) — they just
+                don't have a matching product category, so no category
+                param is passed for those two; the free-text description
+                the client writes is what conveys what they need. */}
+            <Text style={styles.sectionTitle}>📱 Pwodwi</Text>
+            <View style={styles.domainSection}>
+              <Pressable style={styles.domainBtn} onPress={() => router.push("/browse-products")} testID="dashboard-section-products-browse">
+                <Ionicons name="search" size={16} color={colors.brandPrimary} />
+                <Text style={styles.domainBtnText}>Chèche Pwodwi</Text>
+              </Pressable>
+              <Pressable style={[styles.domainBtn, styles.domainBtnOutline]} onPress={() => router.push({ pathname: "/create-alert", params: { category: "phone" } })} testID="dashboard-section-products-demand">
+                <Ionicons name="megaphone-outline" size={16} color={colors.onSurface} />
+                <Text style={[styles.domainBtnText, { color: colors.onSurface }]}>Fè yon Demand</Text>
+              </Pressable>
+            </View>
+
+            <Text style={styles.sectionTitle}>🔧 Teknisyen</Text>
+            <View style={styles.domainSection}>
+              <Pressable style={styles.domainBtn} onPress={() => router.push("/browse-technicians")} testID="dashboard-section-tech-browse">
+                <Ionicons name="construct" size={16} color={colors.brandPrimary} />
+                <Text style={styles.domainBtnText}>Jwenn Teknisyen</Text>
+              </Pressable>
+              <Pressable style={[styles.domainBtn, styles.domainBtnOutline]} onPress={() => router.push("/create-alert")} testID="dashboard-section-tech-demand">
+                <Ionicons name="megaphone-outline" size={16} color={colors.onSurface} />
+                <Text style={[styles.domainBtnText, { color: colors.onSurface }]}>Fè yon Demand</Text>
+              </Pressable>
+            </View>
+
+            <Text style={styles.sectionTitle}>🏪 Biznis Lokal</Text>
+            <View style={styles.domainSection}>
+              <Pressable style={styles.domainBtn} onPress={() => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/browse?category=business`)} testID="dashboard-section-business-browse">
+                <Ionicons name="storefront" size={16} color={colors.brandPrimary} />
+                <Text style={styles.domainBtnText}>Chèche Biznis Lokal</Text>
+              </Pressable>
+              <Pressable style={[styles.domainBtn, styles.domainBtnOutline]} onPress={() => router.push("/create-alert")} testID="dashboard-section-business-demand">
+                <Ionicons name="megaphone-outline" size={16} color={colors.onSurface} />
+                <Text style={[styles.domainBtnText, { color: colors.onSurface }]}>Fè yon Demand</Text>
+              </Pressable>
+            </View>
+
+            <Text style={styles.sectionTitle}>🏍️ Transpò</Text>
+            <View style={styles.domainSection}>
+              <Pressable style={styles.domainBtn} onPress={() => router.push("/request-moto")} testID="dashboard-section-transport-moto">
+                <Ionicons name="bicycle" size={16} color={colors.brandPrimary} />
+                <Text style={styles.domainBtnText}>Mande Moto</Text>
+              </Pressable>
+              <Pressable style={[styles.domainBtn, styles.domainBtnOutline]} onPress={() => router.push("/request-delivery")} testID="dashboard-section-transport-delivery">
+                <Ionicons name="cube-outline" size={16} color={colors.onSurface} />
+                <Text style={[styles.domainBtnText, { color: colors.onSurface }]}>Mande Livrezon</Text>
+              </Pressable>
+            </View>
+          </>
+        ) : (
+          <View style={styles.quickGrid}>
+            {(isPro ? [
+              { icon: "add-circle", label: "Ajoute Pwodwi", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/sell`) },
+              { icon: "chatbubbles", label: "Messenger", onPress: () => router.push("/messenger") },
+            ] : [
+              { icon: "globe", label: "Sit Founisè Mwen", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/suppliers`) },
+              { icon: "chatbubbles", label: "Messenger", onPress: () => router.push("/messenger") },
+            ]).map((a, i) => (
+              <Pressable key={i} style={styles.quickGridItem} onPress={a.onPress} testID={`dashboard-quick-${i}`}>
+                <View style={styles.quickGridIcon}><Ionicons name={a.icon as any} size={20} color={colors.brandPrimary} /></View>
+                <Text style={styles.quickGridLabel}>{a.label}</Text>
+              </Pressable>
+            ))}
+          </View>
+        )}
 
         {/* Summary cards — content differs by role */}
         <View style={styles.summaryRow}>
@@ -237,28 +287,29 @@ export default function DashboardScreen() {
           </View>
         )}
 
-        {/* "Tout Sèvis" — unified category hub so every DealLakay service
-            is one tap away, without the user needing to know which part
-            of the ecosystem it lives in. Categories with no native mobile
-            screen bridge to the equivalent website page (same honest
-            pattern as the search bar and Seller/Supplier product links
-            above), rather than faking native browsing this app can't do. */}
-        <Text style={styles.sectionTitle}>Tout Sèvis</Text>
-        <View style={styles.serviceHubRow}>
-          {[
-            { icon: "phone-portrait", label: "Telefòn", onPress: () => router.push({ pathname: "/browse-products", params: { category: "phone" } }) },
-            { icon: "laptop", label: "Laptop", onPress: () => router.push({ pathname: "/browse-products", params: { category: "laptop" } }) },
-            { icon: "construct", label: "Teknisyen", onPress: () => router.push("/browse-technicians") },
-            { icon: "storefront", label: "Biznis Lokal", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/browse?category=business`) },
-            { icon: "earth", label: "Founisè", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/suppliers`) },
-            { icon: "megaphone", label: "Demand & Òf", onPress: () => router.push("/discover-alerts") },
-          ].map((s, i) => (
-            <Pressable key={i} style={styles.serviceHubItem} onPress={s.onPress} testID={`dashboard-service-${i}`}>
-              <View style={styles.serviceHubIcon}><Ionicons name={s.icon as any} size={18} color={colors.brandPrimary} /></View>
-              <Text style={styles.serviceHubLabel}>{s.label}</Text>
-            </Pressable>
-          ))}
-        </View>
+        {/* "Tout Sèvis" (Client only) — quick sub-category/other-service
+            shortcuts that AREN'T already covered by the 4 domain sections
+            above (Teknisyen and Biznis Lokal were removed from here since
+            they now live in their own dedicated sections — no service
+            should have two different buttons leading to the same place). */}
+        {isClient && (
+          <>
+            <Text style={styles.sectionTitle}>Lòt Sèvis</Text>
+            <View style={styles.serviceHubRow}>
+              {[
+                { icon: "phone-portrait", label: "Telefòn", onPress: () => router.push({ pathname: "/browse-products", params: { category: "phone" } }) },
+                { icon: "laptop", label: "Laptop", onPress: () => router.push({ pathname: "/browse-products", params: { category: "laptop" } }) },
+                { icon: "earth", label: "Founisè", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/suppliers`) },
+                { icon: "megaphone", label: "Demand & Òf", onPress: () => router.push("/discover-alerts") },
+              ].map((s, i) => (
+                <Pressable key={i} style={styles.serviceHubItem} onPress={s.onPress} testID={`dashboard-service-${i}`}>
+                  <View style={styles.serviceHubIcon}><Ionicons name={s.icon as any} size={18} color={colors.brandPrimary} /></View>
+                  <Text style={styles.serviceHubLabel}>{s.label}</Text>
+                </Pressable>
+              ))}
+            </View>
+          </>
+        )}
 
         {/* Seller/Supplier bridge to website-managed features not yet
             native to the mobile app (product catalog, inquiries, shipping) */}
@@ -296,14 +347,21 @@ export default function DashboardScreen() {
             <Text style={styles.transportTitle}>Transpò & Livrezon</Text>
           </View>
           <Text style={styles.transportSubtitle}>Jwenn yon moto oswa voye yon kolis rapidman.</Text>
-          <View style={{ flexDirection: "row", gap: spacing.sm, marginTop: spacing.md }}>
-            <Pressable style={[styles.transportBtn, { flex: 1, marginTop: 0 }]} onPress={() => router.push("/request-moto")} testID="dashboard-request-moto">
-              <Text style={styles.transportBtnText}>M Bezwen Yon Moto</Text>
-            </Pressable>
-            <Pressable style={[styles.transportBtn, { flex: 1, marginTop: 0, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }]} onPress={() => router.push("/request-delivery")} testID="dashboard-request-delivery">
-              <Text style={[styles.transportBtnText, { color: colors.onSurface }]}>Fè Livrezon</Text>
-            </Pressable>
-          </View>
+          {/* Client already has a dedicated "🏍️ Transpò" section above with
+              these same two buttons — showing them again here would be
+              the exact duplicate the reorganization was meant to remove.
+              Pro/Supplier have no dedicated transport section, so they
+              keep quick access here. */}
+          {!isClient && (
+            <View style={{ flexDirection: "row", gap: spacing.sm, marginTop: spacing.md }}>
+              <Pressable style={[styles.transportBtn, { flex: 1, marginTop: 0 }]} onPress={() => router.push("/request-moto")} testID="dashboard-request-moto">
+                <Text style={styles.transportBtnText}>M Bezwen Yon Moto</Text>
+              </Pressable>
+              <Pressable style={[styles.transportBtn, { flex: 1, marginTop: 0, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }]} onPress={() => router.push("/request-delivery")} testID="dashboard-request-delivery">
+                <Text style={[styles.transportBtnText, { color: colors.onSurface }]}>Fè Livrezon</Text>
+              </Pressable>
+            </View>
+          )}
           <Pressable
             style={styles.transportDriverLink}
             onPress={() => router.push(isDriver ? "/driver-dashboard" : "/become-driver")}
@@ -438,6 +496,11 @@ const styles = StyleSheet.create({
   quickGridItem: { width: "31%", backgroundColor: colors.surface, borderRadius: radius.lg, paddingVertical: spacing.md, alignItems: "center", gap: spacing.xs, ...shadow.card },
   quickGridIcon: { width: 40, height: 40, borderRadius: radius.pill, backgroundColor: colors.brandTertiary, alignItems: "center", justifyContent: "center" },
   quickGridLabel: { fontSize: fontSize.sm, color: colors.onSurface, textAlign: "center", fontFamily: font.medium },
+
+  domainSection: { flexDirection: "row", gap: spacing.sm, marginBottom: spacing.lg },
+  domainBtn: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.xs, backgroundColor: colors.brandTertiary, borderRadius: radius.md, paddingVertical: spacing.sm + 2 },
+  domainBtnOutline: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
+  domainBtnText: { fontSize: fontSize.sm, color: colors.brandPrimary, fontFamily: font.medium },
 
   serviceHubRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginTop: spacing.sm },
   serviceHubItem: { width: "22%", alignItems: "center", gap: spacing.xs },
