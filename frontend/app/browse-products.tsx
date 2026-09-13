@@ -1,12 +1,12 @@
 import React, { useCallback, useState } from "react";
-import { View, Text, StyleSheet, Pressable, TextInput, ActivityIndicator, FlatList, Image } from "react-native";
+import { View, Text, StyleSheet, Pressable, TextInput, ActivityIndicator, FlatList, Image, Alert } from "react-native";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 
 import { productsApi, type DealLakayProduct } from "@/src/api/products";
 import { dealAlertsApi, type DealAlert } from "@/src/api/deal-alerts";
+import { notifyMeApi } from "@/src/api/notify-me";
 import { colors, spacing, radius, fontSize, font, shadow } from "@/src/constants/theme";
 
 const CATEGORIES = [
@@ -76,11 +76,6 @@ export default function BrowseProductsScreen() {
         />
       </View>
 
-      <LinearGradient colors={[colors.brandPrimary, "#4338CA"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.promoBanner}>
-        <Text style={styles.promoTitle}>Tout pwodwi</Text>
-        <Text style={styles.promoSubtitle}>Achte, vann, epi fè demand pou pwodwi ou bezwen.</Text>
-      </LinearGradient>
-
       <View style={styles.chipRow}>
         {CATEGORIES.map((c) => (
           <Pressable
@@ -93,6 +88,21 @@ export default function BrowseProductsScreen() {
             <Text style={[styles.chipText, category === c.value && styles.chipTextActive]}>{c.label}</Text>
           </Pressable>
         ))}
+      </View>
+
+      <View style={styles.demandPromoCard}>
+        <View style={styles.demandPromoIcon}><Ionicons name="gift" size={22} color={colors.brandPrimary} /></View>
+        <View style={styles.demandPromoBody}>
+          <Text style={styles.demandPromoTitle}>Demand pwodwi</Text>
+          <Text style={styles.demandPromoSubtitle}>Pa jwenn sa w ap chèche a? Fè yon demand.</Text>
+          <Pressable
+            style={styles.demandPromoBtn}
+            onPress={() => router.push({ pathname: "/create-alert", params: { category: category || "phone" } })}
+            testID="browse-products-promo-demand"
+          >
+            <Text style={styles.demandPromoBtnText}>Fè yon Demand</Text>
+          </Pressable>
+        </View>
       </View>
 
       <Text style={styles.sectionTitle}>
@@ -146,7 +156,22 @@ export default function BrowseProductsScreen() {
           columnWrapperStyle={{ gap: spacing.sm }}
           ListHeaderComponent={header}
           ListFooterComponent={footer}
-          ListEmptyComponent={<Text style={styles.emptyInline}>Pa gen pwodwi pou kategori sa a toujou.</Text>}
+          ListEmptyComponent={
+            <View style={styles.emptyBox}>
+              <Text style={styles.emptyInline}>Pa gen pwodwi pou kategori sa a toujou.</Text>
+              <Pressable
+                style={styles.notifyMeBtn}
+                onPress={() => {
+                  notifyMeApi.subscribe({ kind: "product", category: category || undefined }).catch(() => {});
+                  Alert.alert("Nap Avize W", "N ap avize w lè yon pwodwi vin disponib nan kategori sa a.");
+                }}
+                testID="browse-products-notify-me"
+              >
+                <Ionicons name="notifications-outline" size={16} color={colors.brandPrimary} />
+                <Text style={styles.notifyMeBtnText}>Avèti mwen lè li disponib</Text>
+              </Pressable>
+            </View>
+          }
           renderItem={({ item }) => (
             <Pressable style={styles.card} onPress={() => router.push({ pathname: "/product-details", params: { slug: item.slug } })} testID={`browse-product-${item.id}`}>
               {item.images?.[0] ? (
@@ -180,9 +205,13 @@ const styles = StyleSheet.create({
   listContent: { padding: spacing.lg, paddingBottom: spacing["3xl"] },
   searchRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: colors.surface, borderRadius: radius.md, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, borderWidth: 1, borderColor: colors.border, marginBottom: spacing.md },
   searchInput: { flex: 1, fontSize: fontSize.base, color: colors.onSurface },
-  promoBanner: { borderRadius: radius.lg, padding: spacing.lg, marginBottom: spacing.md },
-  promoTitle: { fontSize: fontSize.xl, fontFamily: font.medium, color: "#fff" },
-  promoSubtitle: { fontSize: fontSize.sm, color: "rgba(255,255,255,0.85)", marginTop: spacing.xs },
+  demandPromoCard: { flexDirection: "row", gap: spacing.md, backgroundColor: colors.brandTertiary, borderRadius: radius.lg, padding: spacing.md, marginBottom: spacing.md },
+  demandPromoIcon: { width: 44, height: 44, borderRadius: radius.md, backgroundColor: colors.surface, alignItems: "center", justifyContent: "center" },
+  demandPromoBody: { flex: 1 },
+  demandPromoTitle: { fontSize: fontSize.base, fontFamily: font.medium, color: colors.onSurface },
+  demandPromoSubtitle: { fontSize: fontSize.sm, color: colors.onSurfaceSecondary, marginTop: 2 },
+  demandPromoBtn: { backgroundColor: colors.brandPrimary, borderRadius: radius.pill, paddingVertical: spacing.sm, alignItems: "center", marginTop: spacing.sm },
+  demandPromoBtnText: { color: colors.onBrandPrimary, fontSize: fontSize.sm, fontFamily: font.medium },
   chipRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.xs, marginBottom: spacing.md },
   chip: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radius.pill, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
   chipActive: { backgroundColor: colors.brandPrimary, borderColor: colors.brandPrimary },
@@ -191,7 +220,10 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: fontSize.base, fontFamily: font.medium, color: colors.onSurface, marginBottom: spacing.sm },
   sectionHeaderRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: spacing.xl, marginBottom: spacing.sm },
   sectionLink: { fontSize: fontSize.sm, color: colors.brandPrimary, fontFamily: font.medium },
-  emptyInline: { fontSize: fontSize.sm, color: colors.onSurfaceSecondary, textAlign: "center", marginTop: spacing.xl },
+  emptyBox: { alignItems: "center", gap: spacing.sm, marginTop: spacing.xl },
+  emptyInline: { fontSize: fontSize.sm, color: colors.onSurfaceSecondary, textAlign: "center" },
+  notifyMeBtn: { flexDirection: "row", alignItems: "center", gap: spacing.xs, borderWidth: 1, borderColor: colors.brandPrimary, borderRadius: radius.pill, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
+  notifyMeBtnText: { color: colors.brandPrimary, fontSize: fontSize.sm, fontFamily: font.medium },
   card: { flex: 1, backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.sm, ...shadow.card },
   cardImage: { width: "100%", height: 110, borderRadius: radius.md, marginBottom: spacing.xs },
   cardImagePlaceholder: { backgroundColor: colors.surfaceSecondary, alignItems: "center", justifyContent: "center" },
