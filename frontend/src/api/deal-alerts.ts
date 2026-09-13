@@ -33,6 +33,7 @@ export interface DealAlert {
   // Only present on /alerts/discover results (community alerts from others).
   creator_name?: string;
   creator_role?: string;
+  response_count?: number;
 }
 
 export interface CreateDealAlertInput {
