@@ -139,13 +139,12 @@ export default function DashboardScreen() {
           <NotificationBell />
         </View>
 
-        {/* Universal search — the mobile app has no native product/
-            technician database of its own, so a search bridges to the
-            website's search results rather than faking a native result
-            list this app can't actually populate. */}
+        {/* Universal search — Phase 2: searches products AND technicians
+            together in one place, rather than the earlier version which
+            only opened product browsing. */}
         <Pressable
           style={styles.searchBar}
-          onPress={() => router.push("/browse-products")}
+          onPress={() => router.push("/search-results")}
           testID="dashboard-search-bar"
         >
           <Ionicons name="search" size={18} color={colors.onSurfaceTertiary} />
