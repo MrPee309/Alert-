@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
 import { transportApi, type TransportRequest } from "@/src/api/transport";
+import { notifyMeApi } from "@/src/api/notify-me";
 import { colors, spacing, radius, fontSize, font } from "@/src/constants/theme";
 
 const POLL_MS = 4000;
@@ -59,6 +60,17 @@ export default function SearchingDriverScreen() {
         <Text style={styles.title}>Pa gen chofè disponib kounye a</Text>
         <Text style={styles.sub}>Eseye ankò nan kèk minit, oswa eseye yon lòt kote pikap.</Text>
         <Pressable style={styles.primaryBtn} onPress={retry} testID="searching-retry"><Text style={styles.primaryBtnText}>Eseye Ankò</Text></Pressable>
+        <Pressable
+          style={styles.notifyMeBtn}
+          onPress={() => {
+            notifyMeApi.subscribe({ kind: "transport" }).catch(() => {});
+            Alert.alert("Nap Avize W", "N ap avize w lè yon moto vin disponib.");
+          }}
+          testID="searching-notify-me"
+        >
+          <Ionicons name="notifications-outline" size={16} color={colors.brandPrimary} />
+          <Text style={styles.notifyMeBtnText}>Avèti mwen lè li disponib</Text>
+        </Pressable>
         <Pressable style={styles.secondaryBtn} onPress={() => router.replace("/dashboard")} testID="searching-back-home"><Text style={styles.secondaryBtnText}>Retounen Akèy</Text></Pressable>
       </SafeAreaView>
     );
@@ -90,6 +102,8 @@ const styles = StyleSheet.create({
   primaryBtn: { backgroundColor: colors.brandPrimary, borderRadius: radius.pill, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, marginTop: spacing.md },
   primaryBtnText: { color: colors.onBrandPrimary, fontSize: fontSize.base, fontFamily: font.medium },
   secondaryBtn: { paddingVertical: spacing.sm },
+  notifyMeBtn: { flexDirection: "row", alignItems: "center", gap: spacing.xs, borderWidth: 1, borderColor: colors.brandPrimary, borderRadius: radius.pill, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, marginTop: spacing.sm },
+  notifyMeBtnText: { color: colors.brandPrimary, fontSize: fontSize.sm, fontFamily: font.medium },
   secondaryBtnText: { color: colors.onSurfaceSecondary, fontSize: fontSize.sm },
   cancelBtn: { marginTop: spacing.xl, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
   cancelBtnText: { color: colors.danger ?? "#DC2626", fontSize: fontSize.sm, fontFamily: font.medium },
