@@ -53,6 +53,15 @@ export default function TransportHistoryScreen() {
                   <Text style={styles.date}>{new Date(item.created_at).toLocaleDateString("fr-HT")}</Text>
                 </View>
                 <Text style={[styles.statusLabel, { color: meta.color }]}>{meta.label}</Text>
+                {item.status === "trip_completed" && (
+                  <Pressable
+                    style={styles.repeatBtn}
+                    onPress={() => router.push({ pathname: item.service_type === "delivery" ? "/request-delivery" : "/request-moto", params: { destination: item.destination_address } })}
+                    testID={`transport-history-repeat-${item.id}`}
+                  >
+                    <Ionicons name="repeat" size={16} color={colors.brandPrimary} />
+                  </Pressable>
+                )}
               </View>
             );
           }}
@@ -74,4 +83,5 @@ const styles = StyleSheet.create({
   route: { fontSize: fontSize.sm, fontFamily: font.medium, color: colors.onSurface },
   date: { fontSize: fontSize.sm, color: colors.onSurfaceTertiary, marginTop: 2 },
   statusLabel: { fontSize: fontSize.sm, fontFamily: font.medium },
+  repeatBtn: { width: 32, height: 32, borderRadius: radius.pill, backgroundColor: colors.brandTertiary, alignItems: "center", justifyContent: "center", marginLeft: spacing.sm },
 });
