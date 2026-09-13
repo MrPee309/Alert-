@@ -42,18 +42,27 @@ export default function BrowseProductsScreen() {
   const [demands, setDemands] = useState<DealAlert[]>([]);
   const [favorited, setFavorited] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async (q: string, cat: string) => {
     setLoading(true);
+    setError(null);
     try {
-      const [productRes, demandRes] = await Promise.all([
-        productsApi.list({ q: q || undefined, category: cat || undefined }).catch(() => ({ products: [] as DealLakayProduct[], page: 1, pages: 1 })),
-        dealAlertsApi.discover({ category: cat || undefined, alertType: "DEMAND" }).catch(() => [] as DealAlert[]),
-      ]);
+      const productRes = await productsApi.list({ q: q || undefined, category: cat || undefined });
       setProducts(productRes.products);
       setPage(productRes.page);
       setTotalPages(productRes.pages);
-      setDemands(demandRes.slice(0, 3));
+      try {
+        const demandRes = await dealAlertsApi.discover({ category: cat || undefined, alertType: "DEMAND" });
+        setDemands(demandRes.slice(0, 3));
+      } catch { setDemands([]); /* demands are a secondary section — don't fail the whole screen for this */ }
+    } catch (e: any) {
+      // FIXED: this used to silently swallow any error and show an empty
+      // "no results" list, hiding real problems (bad URL, timeout, auth)
+      // behind what looked like "just no products" — now the actual
+      // message is shown so it can be diagnosed instead of guessed at.
+      setError(e?.message || "Nou pa t ka chaje pwodwi yo.");
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -187,20 +196,31 @@ export default function BrowseProductsScreen() {
           ListHeaderComponent={header}
           ListFooterComponent={footer}
           ListEmptyComponent={
-            <View style={styles.emptyBox}>
-              <Text style={styles.emptyInline}>Pa gen pwodwi pou kategori sa a toujou.</Text>
-              <Pressable
-                style={styles.notifyMeBtn}
-                onPress={() => {
-                  notifyMeApi.subscribe({ kind: "product", category: category || undefined }).catch(() => {});
-                  Alert.alert("Nap Avize W", "N ap avize w lè yon pwodwi vin disponib nan kategori sa a.");
-                }}
-                testID="browse-products-notify-me"
-              >
-                <Ionicons name="notifications-outline" size={16} color={colors.brandPrimary} />
-                <Text style={styles.notifyMeBtnText}>Avèti mwen lè li disponib</Text>
-              </Pressable>
-            </View>
+            error ? (
+              <View style={styles.emptyBox}>
+                <Ionicons name="warning-outline" size={40} color="#DC2626" />
+                <Text style={[styles.emptyInline, { color: "#DC2626" }]}>{error}</Text>
+                <Pressable style={styles.notifyMeBtn} onPress={() => load(query, category)} testID="browse-products-retry">
+                  <Ionicons name="refresh" size={16} color={colors.brandPrimary} />
+                  <Text style={styles.notifyMeBtnText}>Eseye Ankò</Text>
+                </Pressable>
+              </View>
+            ) : (
+              <View style={styles.emptyBox}>
+                <Text style={styles.emptyInline}>Pa gen pwodwi pou kategori sa a toujou.</Text>
+                <Pressable
+                  style={styles.notifyMeBtn}
+                  onPress={() => {
+                    notifyMeApi.subscribe({ kind: "product", category: category || undefined }).catch(() => {});
+                    Alert.alert("Nap Avize W", "N ap avize w lè yon pwodwi vin disponib nan kategori sa a.");
+                  }}
+                  testID="browse-products-notify-me"
+                >
+                  <Ionicons name="notifications-outline" size={16} color={colors.brandPrimary} />
+                  <Text style={styles.notifyMeBtnText}>Avèti mwen lè li disponib</Text>
+                </Pressable>
+              </View>
+            )
           }
           renderItem={({ item }) => (
             <Pressable style={styles.card} onPress={() => router.push({ pathname: "/product-details", params: { slug: item.slug } })} testID={`browse-product-${item.id}`}>
