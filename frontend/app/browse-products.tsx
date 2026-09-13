@@ -155,7 +155,10 @@ export default function BrowseProductsScreen() {
                   <View style={styles.demandIconWrap}><Ionicons name="search" size={16} color={colors.brandPrimary} /></View>
                   <View style={styles.demandBody}>
                     <Text style={styles.demandTitle} numberOfLines={1}>{demandLabel(d)}</Text>
-                    <Text style={styles.demandMeta}>{[d.department, d.city].filter(Boolean).join(", ") || "Tout Ayiti"}</Text>
+                    <Text style={styles.demandMeta}>
+                      {[d.department, d.city].filter(Boolean).join(", ") || "Tout Ayiti"}
+                      {d.response_count != null && d.response_count > 0 ? ` · ${d.response_count} repons` : ""}
+                    </Text>
                   </View>
                 </Pressable>
               ))}
