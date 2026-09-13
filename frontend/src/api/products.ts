@@ -67,4 +67,8 @@ export const productsApi = {
     const suffix = qs.toString() ? `?${qs.toString()}` : "";
     return apiClient.get<ProductListResponse>(`/products${suffix}`, false);
   },
+
+  toggleFavorite: (productId: string) => apiClient.post<{ favorited: boolean }>(`/favorites/${productId}`),
+
+  myFavorites: () => apiClient.get<DealLakayProduct[]>("/favorites"),
 };
