@@ -134,13 +134,15 @@ export default function DashboardScreen() {
         contentContainerStyle={styles.scrollContent}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor={colors.brandPrimary} />}
       >
-        {/* Header — app wordmark (no logo image file exists in this
-            project's assets, so a styled text wordmark is used, matching
-            the same "Deal" + "Lakay" two-tone style the website uses)
-            replaces the old greeting-in-header layout. The name/greeting
+        {/* Header — real DealLakay icon (copied from the website's
+            frontend/public/deallakay-icon.png) + the same "Deal"+"Lakay"
+            two-tone wordmark style the website uses. The name/greeting
             now sits right above "Kisa ou vle fè jodi a?" instead. */}
         <View style={styles.header}>
-          <Text style={styles.wordmark}>Deal<Text style={styles.wordmarkAccent}>Lakay</Text></Text>
+          <View style={styles.wordmarkRow}>
+            <Image source={require("@/assets/images/deallakay-icon.png")} style={styles.logoIcon} />
+            <Text style={styles.wordmark}>Deal<Text style={styles.wordmarkAccent}>Lakay</Text> Alèt</Text>
+          </View>
           <NotificationBell />
         </View>
 
@@ -418,6 +420,8 @@ const styles = StyleSheet.create({
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   headerText: { flex: 1 },
   greeting: { fontSize: fontSize.xl, fontFamily: font.medium, color: colors.onSurface },
+  wordmarkRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
+  logoIcon: { width: 28, height: 28, borderRadius: radius.sm ?? 8 },
   wordmark: { fontSize: fontSize.xl, fontFamily: font.bold ?? font.medium, color: colors.onSurface },
   wordmarkAccent: { color: colors.brandPrimary },
   subtitle: { fontSize: fontSize.sm, color: colors.onSurfaceSecondary, marginTop: 2 },
