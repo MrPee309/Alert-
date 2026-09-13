@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView, StyleSheet, Pressable, TextInput, ActivityIndicator, Alert, Image } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -43,6 +43,24 @@ export default function RequestMotoScreen() {
       setLocating(false);
     }
   };
+
+  // Auto-fetch on mount so the map/position appear immediately when this
+  // step loads, matching the reference — the manual "Itilize GPS" button
+  // stays available to retry/refresh. Silent on permission denial here
+  // (no alert popup before the user has even seen the screen); the
+  // manual button still explains why it's needed if they deny it there.
+  useEffect(() => {
+    (async () => {
+      const { status } = await Location.getForegroundPermissionsAsync();
+      if (status === "granted") {
+        try {
+          const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+          setPickupCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+          if (!pickupAddress.trim()) setPickupAddress("Kote m ye kounye a");
+        } catch { /* silent — manual GPS button still available */ }
+      }
+    })();
+  }, []);
 
   const canAdvance = () => {
     if (step === 0) return !!pickupCoords && !!pickupAddress.trim();
