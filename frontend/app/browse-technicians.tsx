@@ -11,6 +11,7 @@ import { colors, spacing, radius, fontSize, font, shadow } from "@/src/constants
 export default function BrowseTechniciansScreen() {
   const [query, setQuery] = useState("");
   const [items, setItems] = useState<DealLakayTechnician[]>([]);
+  const [favorited, setFavorited] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
 
   const search = useCallback(async (q: string) => {
@@ -79,6 +80,12 @@ export default function BrowseTechniciansScreen() {
                 <Text style={styles.specialties} numberOfLines={1}>{item.specialties.join(", ") || "—"}</Text>
                 <Text style={styles.location}>{item.city}{item.review_count > 0 ? ` · ⭐ ${item.rating.toFixed(1)} (${item.review_count})` : ""}</Text>
               </View>
+              <Pressable
+                onPress={() => { techniciansApi.toggleFavorite(item.username).catch(() => {}); setFavorited((f) => ({ ...f, [item.username]: !f[item.username] })); }}
+                testID={`browse-technician-favorite-${item.username}`}
+              >
+                <Ionicons name={favorited[item.username] ? "heart" : "heart-outline"} size={20} color={favorited[item.username] ? "#EF4444" : colors.onSurfaceTertiary} />
+              </Pressable>
             </Pressable>
           )}
         />
