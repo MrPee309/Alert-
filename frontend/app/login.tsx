@@ -27,6 +27,8 @@ export default function LoginScreen() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [usernameFocused, setUsernameFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
@@ -151,9 +153,11 @@ export default function LoginScreen() {
           <View style={styles.card}>
             <Text style={styles.label}>Imèl oswa Non Itilizatè</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, usernameFocused && styles.inputFocused]}
               value={username}
               onChangeText={setUsername}
+              onFocus={() => setUsernameFocused(true)}
+              onBlur={() => setUsernameFocused(false)}
               autoCapitalize="none"
               autoCorrect={false}
               placeholder="egzanp: jean_dupont"
@@ -162,11 +166,13 @@ export default function LoginScreen() {
             />
 
             <Text style={styles.label}>Modpas</Text>
-            <View style={styles.passwordRow}>
+            <View style={[styles.passwordRow, passwordFocused && styles.inputFocused]}>
               <TextInput
                 style={styles.passwordInput}
                 value={password}
                 onChangeText={setPassword}
+                onFocus={() => setPasswordFocused(true)}
+                onBlur={() => setPasswordFocused(false)}
                 secureTextEntry={!showPassword}
                 placeholder="Modpas ou"
                 placeholderTextColor={colors.onSurfaceTertiary}
@@ -285,6 +291,11 @@ const styles = StyleSheet.create({
     color: colors.onSurface,
     backgroundColor: colors.surfaceSecondary,
     marginTop: spacing.xs,
+  },
+  inputFocused: {
+    borderColor: colors.brandPrimary,
+    borderWidth: 1.5,
+    backgroundColor: colors.surface,
   },
   passwordRow: {
     flexDirection: "row",
