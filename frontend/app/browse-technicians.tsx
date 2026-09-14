@@ -20,10 +20,19 @@ const SPECIALTIES = [
   { value: "Reparasyon Telefòn", label: "Telefòn", icon: "phone-portrait" as const },
   { value: "Reparasyon Laptop", label: "Laptop", icon: "laptop" as const },
   { value: "Mekanisyen", label: "Mekanisyen", icon: "car" as const },
+  { value: "Elektrisyen Machin", label: "Elek. Machin", icon: "car-sport" as const },
+  { value: "Reparasyon Moto", label: "Moto", icon: "bicycle" as const },
   { value: "Plonbye", label: "Plonbye", icon: "water" as const },
   { value: "Elektrisyen", label: "Elektrisyen", icon: "flash" as const },
   { value: "Klimatizasyon", label: "Klimatizasyon", icon: "snow" as const },
   { value: "Konstriksyon", label: "Konstriksyon", icon: "hammer" as const },
+  { value: "Chapant (Bwa)", label: "Chapant", icon: "construct" as const },
+  { value: "Mason", label: "Mason", icon: "business" as const },
+  { value: "Penti (Kay)", label: "Penti", icon: "color-palette" as const },
+  { value: "Soude (Welding)", label: "Soude", icon: "flame" as const },
+  { value: "Jadinaj", label: "Jadinaj", icon: "leaf" as const },
+  { value: "Netwayaj", label: "Netwayaj", icon: "sparkles" as const },
+  { value: "Kouti", label: "Kouti", icon: "cut" as const },
 ];
 
 /** Same organization level as browse-products.tsx: gradient promo banner
