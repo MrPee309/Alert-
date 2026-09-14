@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { LogBox } from "react-native";
 
 import { useIconFonts } from "@/src/hooks/use-icon-fonts";
+import { useAppFonts } from "@/src/hooks/use-app-fonts";
 import { I18nProvider } from "@/src/i18n";
 import { AuthProvider, useAuth } from "@/src/context/auth-context";
 import { DEALLAKAY_API_URL } from "@/src/constants/config";
@@ -29,7 +30,10 @@ if (DEALLAKAY_API_URL) {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [loaded, error] = useIconFonts();
+  const [iconsLoaded, iconsError] = useIconFonts();
+  const [appFontsLoaded, appFontsError] = useAppFonts();
+  const loaded = iconsLoaded && appFontsLoaded;
+  const error = iconsError || appFontsError;
 
   useEffect(() => {
     if (loaded || error) {
