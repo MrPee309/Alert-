@@ -379,13 +379,21 @@ export default function DashboardScreen() {
           <EmptyState icon="pulse-outline" title="Pa gen aktivite ankò." subtitle="Ou ap wè aktivite ou isit la." />
         ) : (
           recentActivity.map((n) => (
-            <View key={n.id} style={styles.activityRow} testID={`dashboard-activity-${n.id}`}>
-              <View style={[styles.activityDot, !n.read && styles.activityDotUnread]} />
+            <Pressable
+              key={n.id}
+              style={styles.activityRow}
+              onPress={() => router.push({ pathname: "/notification-details", params: { id: n.id } })}
+              testID={`dashboard-activity-${n.id}`}
+            >
+              <View style={[styles.activityIconWrap, !n.read && styles.activityIconWrapUnread]}>
+                <Ionicons name="notifications" size={16} color={n.read ? colors.onSurfaceTertiary : colors.brandPrimary} />
+              </View>
               <View style={styles.activityBody}>
                 <Text style={styles.activityText} numberOfLines={2}>{n.message}</Text>
                 <Text style={styles.activityTime}>{timeAgo(n.createdAt)}</Text>
               </View>
-            </View>
+              <Ionicons name="chevron-forward" size={18} color={colors.onSurfaceTertiary} />
+            </Pressable>
           ))
         )}
       </ScrollView>
@@ -439,7 +447,7 @@ const styles = StyleSheet.create({
   roleBadge: { alignSelf: "flex-start", backgroundColor: colors.brandTertiary, borderRadius: radius.pill, paddingHorizontal: spacing.sm, paddingVertical: 2, marginTop: spacing.xs },
   roleBadgeText: { color: colors.onBrandTertiary, fontSize: fontSize.sm, fontFamily: font.medium },
 
-  searchBar: { flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: colors.surface, borderRadius: radius.lg, paddingHorizontal: spacing.md, paddingVertical: spacing.sm + 2, marginTop: spacing.lg, ...shadow.card },
+  searchBar: { flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: colors.surface, borderRadius: radius.lg, paddingHorizontal: spacing.md, paddingVertical: spacing.md, marginTop: spacing.lg, ...shadow.card },
   searchBarText: { color: colors.onSurfaceTertiary, fontSize: fontSize.sm },
 
   hubQuestion: { fontSize: fontSize.lg, fontFamily: font.medium, color: colors.onSurface, marginTop: spacing.xl, marginBottom: spacing.md },
@@ -546,9 +554,9 @@ const styles = StyleSheet.create({
   alertCardMeta: { fontSize: fontSize.sm, color: colors.onSurfaceSecondary, marginTop: 2 },
   activeDot: { width: 8, height: 8, borderRadius: radius.pill, backgroundColor: colors.success },
 
-  activityRow: { flexDirection: "row", gap: spacing.sm, paddingVertical: spacing.sm },
-  activityDot: { width: 6, height: 6, borderRadius: radius.pill, backgroundColor: "transparent", marginTop: 7 },
-  activityDotUnread: { backgroundColor: colors.brandPrimary },
+  activityRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.sm },
+  activityIconWrap: { width: 34, height: 34, borderRadius: radius.pill, backgroundColor: colors.surfaceSecondary, alignItems: "center", justifyContent: "center" },
+  activityIconWrapUnread: { backgroundColor: colors.brandTertiary },
   activityBody: { flex: 1 },
   activityText: { fontSize: fontSize.sm, color: colors.onSurface },
   activityTime: { fontSize: fontSize.sm, color: colors.onSurfaceTertiary, marginTop: 2 },
