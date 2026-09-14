@@ -4,7 +4,7 @@
  */
 const ht = {
   common: {
-    appName: "DealLakay Alert",
+    appName: "DealLakay Alèt",
     tagline: "Bezwen yon bagay? ALÈT li.",
     cancel: "Anile",
     save: "Anrejistre",
