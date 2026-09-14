@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -141,6 +142,8 @@ export default function LoginScreen() {
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : undefined}>
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
           <View style={styles.header}>
+            <Image source={require("@/assets/images/icon.png")} style={styles.loginLogo} />
+            <Text style={styles.wordmarkLogin}>Deal<Text style={styles.wordmarkLoginAccent}>Lakay</Text> Alèt</Text>
             <Text style={styles.title}>Konekte</Text>
             <Text style={styles.subtitle}>Byenvini tounen 👋</Text>
           </View>
@@ -246,6 +249,9 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   header: { alignItems: "center", marginBottom: spacing["2xl"] },
+  loginLogo: { width: 72, height: 72, borderRadius: radius.lg, marginBottom: spacing.sm },
+  wordmarkLogin: { fontSize: fontSize.lg, fontFamily: font.display, color: colors.onSurface, marginBottom: spacing.md },
+  wordmarkLoginAccent: { color: colors.brandPrimary },
   title: {
     fontSize: fontSize["2xl"],
     fontFamily: font.medium,
