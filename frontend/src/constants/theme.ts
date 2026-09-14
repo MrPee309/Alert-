@@ -65,6 +65,9 @@ export const fontSize = {
 export const font = {
   regular: "PlusJakartaSans-Regular",
   medium: "PlusJakartaSans-Medium",
+  // Matches the website's Logo.jsx exactly: font-display ("Outfit"),
+  // font-weight 800 — used only for the "DealLakay Alèt" wordmark.
+  display: "Outfit_800ExtraBold",
 } as const;
 
 /** Shadow tier 1 — subtle elevation only. */
