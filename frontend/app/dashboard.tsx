@@ -433,7 +433,7 @@ const styles = StyleSheet.create({
   greeting: { fontSize: fontSize.xl, fontFamily: font.medium, color: colors.onSurface },
   wordmarkRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
   logoIcon: { width: 28, height: 28, borderRadius: radius.sm ?? 8 },
-  wordmark: { fontSize: fontSize.xl, fontFamily: font.bold ?? font.medium, color: colors.onSurface },
+  wordmark: { fontSize: fontSize.xl, fontFamily: font.display, color: colors.onSurface },
   wordmarkAccent: { color: colors.brandPrimary },
   subtitle: { fontSize: fontSize.sm, color: colors.onSurfaceSecondary, marginTop: 2 },
   roleBadge: { alignSelf: "flex-start", backgroundColor: colors.brandTertiary, borderRadius: radius.pill, paddingHorizontal: spacing.sm, paddingVertical: 2, marginTop: spacing.xs },
