@@ -180,20 +180,31 @@ export default function DashboardScreen() {
             </View>
 
             <Text style={styles.sectionTitle}>Tout sèvis</Text>
-            <View style={styles.allServicesGrid}>
-              {[
+            {/* FIXED: flexWrap+justifyContent on one container didn't
+                reliably center the incomplete last row (2 items left-
+                aligned instead of centered) — explicit 3-then-2 rows,
+                each individually centered, fixes this for good. */}
+            {(() => {
+              const services = [
                 { icon: "cart", label: "Pwodwi", color: "#8B5CF6", onPress: () => router.push("/browse-products") },
                 { icon: "construct", label: "Teknisyen", color: "#2563EB", onPress: () => router.push("/browse-technicians") },
-                { icon: "storefront", label: "Biznis Lokal", color: "#F97316", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/browse?category=business`) },
+                { icon: "storefront", label: "Biznis Lokal", color: "#F97316", onPress: () => router.push("/browse-businesses") },
                 { icon: "bicycle", label: "Transpò & Livrezon", color: "#0891B2", onPress: () => router.push("/transport-category") },
                 { icon: "earth", label: "Founisè", color: "#16A34A", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/suppliers`) },
-              ].map((s, i) => (
-                <Pressable key={i} style={styles.allServicesCard} onPress={s.onPress} testID={`dashboard-allservices-${i}`}>
-                  <View style={[styles.allServicesIcon, { backgroundColor: `${s.color}1A` }]}><Ionicons name={s.icon as any} size={20} color={s.color} /></View>
-                  <Text style={styles.allServicesLabel}>{s.label}</Text>
-                </Pressable>
-              ))}
-            </View>
+              ];
+              const rows: (typeof services)[] = [];
+              for (let i = 0; i < services.length; i += 3) rows.push(services.slice(i, i + 3));
+              return rows.map((row, rowIndex) => (
+                <View key={rowIndex} style={styles.allServicesRow}>
+                  {row.map((s, i) => (
+                    <Pressable key={i} style={styles.allServicesCard} onPress={s.onPress} testID={`dashboard-allservices-${rowIndex * 3 + i}`}>
+                      <View style={[styles.allServicesIcon, { backgroundColor: `${s.color}1A` }]}><Ionicons name={s.icon as any} size={20} color={s.color} /></View>
+                      <Text style={styles.allServicesLabel}>{s.label}</Text>
+                    </Pressable>
+                  ))}
+                </View>
+              ));
+            })()}
 
             {/* "Toupre ou" — a real recommended-technicians feed (no fake
                 distance figure, since the app doesn't compute GPS distance
@@ -443,7 +454,7 @@ const styles = StyleSheet.create({
   quickActionSecondary: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.xs, backgroundColor: colors.surface, borderRadius: radius.lg, paddingVertical: spacing.lg, borderWidth: 1, borderColor: colors.border },
   quickActionSecondaryText: { color: colors.onSurface, fontSize: fontSize.base, fontFamily: font.medium },
 
-  allServicesGrid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, marginBottom: spacing.xl },
+  allServicesRow: { flexDirection: "row", gap: spacing.sm, justifyContent: "center", marginBottom: spacing.sm },
   allServicesCard: { width: "31%", backgroundColor: colors.surface, borderRadius: radius.lg, paddingVertical: spacing.md, alignItems: "center", gap: spacing.xs, ...shadow.card },
   allServicesIcon: { width: 44, height: 44, borderRadius: radius.md, alignItems: "center", justifyContent: "center" },
   allServicesLabel: { fontSize: fontSize.sm, color: colors.onSurface, textAlign: "center", fontFamily: font.medium },
