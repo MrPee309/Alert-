@@ -234,7 +234,7 @@ export default function BrowseProductsScreen() {
                 onPress={() => { productsApi.toggleFavorite(item.id).catch(() => {}); setFavorited((f) => ({ ...f, [item.id]: !f[item.id] })); }}
                 testID={`browse-product-favorite-${item.id}`}
               >
-                <Ionicons name={favorited[item.id] ? "heart" : "heart-outline"} size={16} color={favorited[item.id] ? "#EF4444" : colors.onSurfaceSecondary} />
+                <Ionicons name={favorited[item.id] ? "heart" : "heart-outline"} size={16} color={favorited[item.id] ? colors.error : colors.onSurfaceSecondary} />
               </Pressable>
               <Text style={styles.cardTitle} numberOfLines={1}>{item.title}</Text>
               <Text style={styles.cardPrice}>{item.price.toLocaleString()} Gdes</Text>
