@@ -9,7 +9,12 @@ import { colors, spacing, radius, fontSize, font, shadow } from "@/src/constants
 /** Top-right notification bell — reused across Akèy, Alèt, Messenger, Profil
  * headers per the current navigation structure (Notifications moved out of
  * the bottom tabs, but the Notification Center itself is unchanged). */
-export function NotificationBell() {
+/** Top-right notification bell — reused across Akèy, Alèt, Messenger, Profil
+ * headers per the current navigation structure (Notifications moved out of
+ * the bottom tabs, but the Notification Center itself is unchanged).
+ * Optional `color` prop for screens with a dark/gradient header (defaults
+ * to the existing dark onSurface color everywhere else, unchanged). */
+export function NotificationBell({ color }: { color?: string } = {}) {
   const [unread, setUnread] = useState(0);
 
   useEffect(() => {
@@ -21,7 +26,7 @@ export function NotificationBell() {
 
   return (
     <Pressable style={styles.iconButton} onPress={() => router.push("/notifications")} testID="notification-bell" hitSlop={8}>
-      <Ionicons name="notifications-outline" size={22} color={colors.onSurface} />
+      <Ionicons name="notifications-outline" size={22} color={color || colors.onSurface} />
       {unread > 0 && (
         <View style={styles.badge}>
           <Text style={styles.badgeText}>{unread > 9 ? "9+" : unread}</Text>
