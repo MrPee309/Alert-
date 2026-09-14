@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Text, View, StyleSheet, Pressable } from "react-native";
+import { Text, View, StyleSheet, Pressable, Image } from "react-native";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -30,11 +30,7 @@ export default function Index() {
   if (checkingOnboarding) {
     return (
       <SafeAreaView style={styles.splash} edges={["top", "bottom"]}>
-        <View style={styles.bellBadgeWrap}>
-          <View style={styles.bellBadge}>
-            <Text style={styles.bellEmoji}>🔔</Text>
-          </View>
-        </View>
+        <Image source={require("@/assets/images/icon.png")} style={styles.splashLogo} />
       </SafeAreaView>
     );
   }
@@ -42,12 +38,7 @@ export default function Index() {
   return (
     <SafeAreaView style={styles.splash} edges={["top", "bottom"]}>
       <View style={styles.splashContent}>
-        <View style={styles.bellBadgeWrap}>
-          <View style={styles.bellBadge}>
-            <Text style={styles.bellEmoji}>🔔</Text>
-          </View>
-          <View style={styles.bellDot} />
-        </View>
+        <Image source={require("@/assets/images/icon.png")} style={styles.splashLogo} />
         <Text style={styles.splashAppName}>{t("common.appName")}</Text>
         <Text style={styles.splashTagline}>{t("common.tagline")}</Text>
       </View>
@@ -99,28 +90,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   splashContent: { alignItems: "center" },
-  bellBadgeWrap: { position: "relative", marginBottom: spacing.xl },
-  bellBadge: {
-    width: 88,
-    height: 88,
-    borderRadius: radius.pill,
-    backgroundColor: colors.brandPrimary,
-    alignItems: "center",
-    justifyContent: "center",
-    ...shadow.raised,
-  },
-  bellEmoji: { fontSize: 40 },
-  bellDot: {
-    position: "absolute",
-    top: 2,
-    right: 2,
-    width: 18,
-    height: 18,
-    borderRadius: radius.pill,
-    backgroundColor: colors.error,
-    borderWidth: 2,
-    borderColor: colors.surfaceInverse,
-  },
+  splashLogo: { width: 100, height: 100, borderRadius: radius.lg, marginBottom: spacing.xl },
   splashAppName: {
     fontSize: fontSize["2xl"],
     fontFamily: font.medium,
