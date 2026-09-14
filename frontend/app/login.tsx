@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 
 import { useAuth, GoogleNeedsLocationError } from "@/src/context/auth-context";
@@ -140,12 +141,20 @@ export default function LoginScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
+    <SafeAreaView style={styles.safeArea} edges={["bottom"]}>
+      {/* Gradient header banner — same rounded-bottom approximation used
+          on the Home screen (no react-native-svg installed for a precise
+          wave path). */}
+      <LinearGradient colors={[colors.brandPrimary, "#2563EB"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.loginHeaderBanner}>
+        <SafeAreaView edges={["top"]}>
+          <Image source={require("@/assets/images/icon.png")} style={styles.loginLogo} />
+          <Text style={styles.wordmarkLogin}>Deal<Text style={styles.wordmarkLoginAccent}>Lakay</Text> Alèt</Text>
+        </SafeAreaView>
+      </LinearGradient>
+
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : undefined}>
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
           <View style={styles.header}>
-            <Image source={require("@/assets/images/icon.png")} style={styles.loginLogo} />
-            <Text style={styles.wordmarkLogin}>Deal<Text style={styles.wordmarkLoginAccent}>Lakay</Text> Alèt</Text>
             <Text style={styles.title}>Konekte</Text>
             <Text style={styles.subtitle}>Byenvini tounen 👋</Text>
           </View>
@@ -244,8 +253,9 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     padding: spacing.lg,
-    paddingTop: spacing["2xl"],
+    paddingTop: spacing.xl,
   },
+  loginHeaderBanner: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing["2xl"], alignItems: "center", borderBottomLeftRadius: 32, borderBottomRightRadius: 32 },
   backButton: {
     width: 36,
     height: 36,
@@ -254,10 +264,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: spacing.xl,
   },
-  header: { alignItems: "center", marginBottom: spacing["2xl"] },
-  loginLogo: { width: 72, height: 72, borderRadius: radius.lg, marginBottom: spacing.sm },
-  wordmarkLogin: { fontSize: fontSize.lg, fontFamily: font.display, color: colors.onSurface, marginBottom: spacing.md },
-  wordmarkLoginAccent: { color: colors.brandPrimary },
+  header: { alignItems: "center", marginBottom: spacing.xl },
+  loginLogo: { width: 64, height: 64, borderRadius: radius.lg, marginBottom: spacing.sm },
+  wordmarkLogin: { fontSize: fontSize.lg, fontFamily: font.display, color: "#fff" },
+  wordmarkLoginAccent: { color: "#93C5FD" },
   title: {
     fontSize: fontSize["2xl"],
     fontFamily: font.medium,
