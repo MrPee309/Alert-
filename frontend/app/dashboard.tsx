@@ -130,25 +130,36 @@ export default function DashboardScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
+      {/* Gradient header banner — approximates the reference mockup's
+          blue "wave" header using a rounded-bottom LinearGradient rather
+          than an SVG wave path (react-native-svg isn't installed in this
+          project; adding it would need a new native dependency + rebuild).
+          Sits OUTSIDE the padded ScrollView so it can bleed edge-to-edge;
+          the search bar below overlaps its bottom edge via negative margin. */}
+      <LinearGradient colors={[colors.brandPrimary, "#2563EB"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.headerBanner}>
+        <SafeAreaView edges={["top"]}>
+          <View style={styles.header}>
+            <View style={styles.wordmarkRow}>
+              <Image source={require("@/assets/images/deallakay-icon.png")} style={styles.logoIcon} />
+              <View>
+                <Text style={styles.wordmarkOnDark}>Deal<Text style={styles.wordmarkAccentOnDark}>Lakay</Text></Text>
+                <Text style={styles.wordmarkOnDark}>Alèt</Text>
+              </View>
+            </View>
+            <NotificationBell color={colors.onBrandPrimary} />
+          </View>
+          <Text style={styles.headerTagline}>Enfòmasyon ki itil, opòtinite ki pi pre w!</Text>
+        </SafeAreaView>
+      </LinearGradient>
+
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor={colors.brandPrimary} />}
       >
-        {/* Header — real DealLakay icon (copied from the website's
-            frontend/public/deallakay-icon.png) + the same "Deal"+"Lakay"
-            two-tone wordmark style the website uses. The name/greeting
-            now sits right above "Kisa ou vle fè jodi a?" instead. */}
-        <View style={styles.header}>
-          <View style={styles.wordmarkRow}>
-            <Image source={require("@/assets/images/deallakay-icon.png")} style={styles.logoIcon} />
-            <Text style={styles.wordmark}>Deal<Text style={styles.wordmarkAccent}>Lakay</Text> Alèt</Text>
-          </View>
-          <NotificationBell />
-        </View>
-
         {/* Universal search — Phase 2: searches products AND technicians
             together in one place, rather than the earlier version which
-            only opened product browsing. */}
+            only opened product browsing. Sits with a negative top margin
+            so it visually overlaps the gradient banner's bottom edge. */}
         <Pressable
           style={styles.searchBar}
           onPress={() => router.push("/search-results")}
@@ -169,13 +180,23 @@ export default function DashboardScreen() {
             <Text style={styles.greeting}>Bonjou, {user?.fullName?.split(" ")[0] || "zanmi"} 👋</Text>
             <Text style={styles.hubQuestion}>Kisa ou vle fè jodi a?</Text>
             <View style={styles.quickActionRow}>
-              <Pressable style={styles.quickActionPrimary} onPress={() => router.push("/search-results")} testID="dashboard-quick-search">
-                <Ionicons name="search" size={20} color={colors.onBrandPrimary} />
-                <Text style={styles.quickActionPrimaryText}>Chèche</Text>
+              <Pressable style={styles.quickActionCardWrap} onPress={() => router.push("/search-results")} testID="dashboard-quick-search">
+                <LinearGradient colors={[colors.brandPrimary, "#4338CA"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.quickActionPrimary}>
+                  <Ionicons name="search" size={20} color={colors.onBrandPrimary} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.quickActionPrimaryText}>Chèche</Text>
+                    <Text style={styles.quickActionPrimarySubtext}>Sèvis, pwodwi, plis...</Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={18} color="rgba(255,255,255,0.85)" />
+                </LinearGradient>
               </Pressable>
               <Pressable style={styles.quickActionSecondary} onPress={() => router.push("/make-a-demand")} testID="dashboard-quick-demand">
                 <Ionicons name="megaphone-outline" size={20} color={colors.onSurface} />
-                <Text style={styles.quickActionSecondaryText}>Fè yon Demand</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.quickActionSecondaryText}>Fè yon Demand</Text>
+                  <Text style={styles.quickActionSecondarySubtext}>Poste bezwen w</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={16} color={colors.onSurfaceTertiary} />
               </Pressable>
             </View>
 
@@ -186,11 +207,11 @@ export default function DashboardScreen() {
                 each individually centered, fixes this for good. */}
             {(() => {
               const services = [
-                { icon: "cart", label: "Pwodwi", color: "#8B5CF6", onPress: () => router.push("/browse-products") },
-                { icon: "construct", label: "Teknisyen", color: "#2563EB", onPress: () => router.push("/browse-technicians") },
-                { icon: "storefront", label: "Biznis Lokal", color: "#F97316", onPress: () => router.push("/browse-businesses") },
-                { icon: "bicycle", label: "Transpò & Livrezon", color: "#0891B2", onPress: () => router.push("/transport-category") },
-                { icon: "earth", label: "Founisè", color: "#16A34A", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/suppliers`) },
+                { icon: "cart", label: "Pwodwi", subtitle: "Telefòn, òdinatè...", color: "#8B5CF6", onPress: () => router.push("/browse-products") },
+                { icon: "construct", label: "Teknisyen", subtitle: "Reparasyon, sèvis...", color: "#2563EB", onPress: () => router.push("/browse-technicians") },
+                { icon: "storefront", label: "Biznis Lokal", subtitle: "Boutik, magazen...", color: "#F97316", onPress: () => router.push("/browse-businesses") },
+                { icon: "bicycle", label: "Transpò & Livrezon", subtitle: "Andan / Aletranje...", color: "#0891B2", onPress: () => router.push("/transport-category") },
+                { icon: "earth", label: "Founisè", subtitle: "Etazini, ènténasyonal...", color: "#16A34A", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/suppliers`) },
               ];
               const rows: (typeof services)[] = [];
               for (let i = 0; i < services.length; i += 3) rows.push(services.slice(i, i + 3));
@@ -199,7 +220,8 @@ export default function DashboardScreen() {
                   {row.map((s, i) => (
                     <Pressable key={i} style={styles.allServicesCard} onPress={s.onPress} testID={`dashboard-allservices-${rowIndex * 3 + i}`}>
                       <View style={[styles.allServicesIcon, { backgroundColor: `${s.color}1A` }]}><Ionicons name={s.icon as any} size={20} color={s.color} /></View>
-                      <Text style={styles.allServicesLabel}>{s.label}</Text>
+                      <Text style={styles.allServicesLabel} numberOfLines={2}>{s.label}</Text>
+                      <Text style={styles.allServicesSubtitle} numberOfLines={1}>{s.subtitle}</Text>
                     </Pressable>
                   ))}
                 </View>
@@ -210,6 +232,14 @@ export default function DashboardScreen() {
                 distance figure, since the app doesn't compute GPS distance
                 to each technician here — only what's genuinely available:
                 name, specialty, rating). */}
+            <View style={styles.trustBanner} testID="dashboard-trust-banner">
+              <View style={styles.trustBannerIcon}><Ionicons name="shield-checkmark" size={22} color="#fff" /></View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.trustBannerTitle}>Rezo serye, kominote solid</Text>
+                <Text style={styles.trustBannerSubtitle}>Pataje, achte, vann, grandi ansanm</Text>
+              </View>
+            </View>
+
             {nearbyTechnicians.length > 0 && (
               <>
                 <View style={styles.nearbyHeaderRow}>
@@ -436,18 +466,22 @@ const styles = StyleSheet.create({
   loadingContainer: { flex: 1, backgroundColor: colors.surfaceSecondary, alignItems: "center", justifyContent: "center" },
   scrollContent: { padding: spacing.lg, paddingBottom: spacing["3xl"] },
 
+  headerBanner: { paddingHorizontal: spacing.lg, paddingBottom: spacing["2xl"], borderBottomLeftRadius: 32, borderBottomRightRadius: 32 },
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   headerText: { flex: 1 },
   greeting: { fontSize: fontSize.xl, fontFamily: font.medium, color: colors.onSurface },
-  wordmarkRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
-  logoIcon: { width: 28, height: 28, borderRadius: radius.sm ?? 8 },
+  wordmarkRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
+  logoIcon: { width: 44, height: 44, borderRadius: radius.md },
   wordmark: { fontSize: fontSize.xl, fontFamily: font.display, color: colors.onSurface },
   wordmarkAccent: { color: colors.brandPrimary },
+  wordmarkOnDark: { fontSize: fontSize.lg, fontFamily: font.display, color: "#fff", lineHeight: fontSize.lg + 2 },
+  wordmarkAccentOnDark: { color: "#93C5FD" },
+  headerTagline: { color: "rgba(255,255,255,0.85)", fontSize: fontSize.sm, marginTop: spacing.sm },
   subtitle: { fontSize: fontSize.sm, color: colors.onSurfaceSecondary, marginTop: 2 },
   roleBadge: { alignSelf: "flex-start", backgroundColor: colors.brandTertiary, borderRadius: radius.pill, paddingHorizontal: spacing.sm, paddingVertical: 2, marginTop: spacing.xs },
   roleBadgeText: { color: colors.onBrandTertiary, fontSize: fontSize.sm, fontFamily: font.medium },
 
-  searchBar: { flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: colors.surface, borderRadius: radius.lg, paddingHorizontal: spacing.md, paddingVertical: spacing.md, marginTop: spacing.lg, ...shadow.card },
+  searchBar: { flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: colors.surface, borderRadius: radius.lg, paddingHorizontal: spacing.md, paddingVertical: spacing.md, marginTop: -spacing["2xl"], marginBottom: spacing.sm, ...shadow.raised },
   searchBarText: { color: colors.onSurfaceTertiary, fontSize: fontSize.sm },
 
   hubQuestion: { fontSize: fontSize.lg, fontFamily: font.medium, color: colors.onSurface, marginTop: spacing.xl, marginBottom: spacing.md },
@@ -457,14 +491,22 @@ const styles = StyleSheet.create({
   quickGridLabel: { fontSize: fontSize.sm, color: colors.onSurface, textAlign: "center", fontFamily: font.medium },
 
   quickActionRow: { flexDirection: "row", gap: spacing.sm, marginTop: spacing.md, marginBottom: spacing.xl },
-  quickActionPrimary: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.xs, backgroundColor: colors.brandPrimary, borderRadius: radius.lg, paddingVertical: spacing.lg },
+  quickActionCardWrap: { flex: 1, borderRadius: radius.lg, ...shadow.raised },
+  quickActionPrimary: { flex: 1, flexDirection: "row", alignItems: "center", gap: spacing.sm, borderRadius: radius.lg, paddingVertical: spacing.md, paddingHorizontal: spacing.md },
   quickActionPrimaryText: { color: colors.onBrandPrimary, fontSize: fontSize.base, fontFamily: font.medium },
-  quickActionSecondary: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: spacing.xs, backgroundColor: colors.surface, borderRadius: radius.lg, paddingVertical: spacing.lg, borderWidth: 1, borderColor: colors.border },
+  quickActionPrimarySubtext: { color: "rgba(255,255,255,0.8)", fontSize: 11, marginTop: 2 },
+  quickActionSecondary: { flex: 1, flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: colors.surface, borderRadius: radius.lg, paddingVertical: spacing.md, paddingHorizontal: spacing.md, borderWidth: 1, borderColor: colors.border },
   quickActionSecondaryText: { color: colors.onSurface, fontSize: fontSize.base, fontFamily: font.medium },
+  quickActionSecondarySubtext: { color: colors.onSurfaceSecondary, fontSize: 11, marginTop: 2 },
 
   allServicesRow: { flexDirection: "row", gap: spacing.sm, justifyContent: "center", marginBottom: spacing.sm },
-  allServicesCard: { width: "31%", backgroundColor: colors.surface, borderRadius: radius.lg, paddingVertical: spacing.md, alignItems: "center", gap: spacing.xs, ...shadow.card },
-  allServicesIcon: { width: 44, height: 44, borderRadius: radius.md, alignItems: "center", justifyContent: "center" },
+  allServicesCard: { width: "31%", backgroundColor: colors.surface, borderRadius: radius.lg, paddingVertical: spacing.md, paddingHorizontal: spacing.xs, alignItems: "center", gap: 2, ...shadow.card },
+  allServicesSubtitle: { fontSize: 10, color: colors.onSurfaceTertiary, textAlign: "center" },
+  trustBanner: { flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: colors.brandPrimary, borderRadius: radius.lg, padding: spacing.md, marginBottom: spacing.xl },
+  trustBannerIcon: { width: 40, height: 40, borderRadius: radius.pill, backgroundColor: "rgba(255,255,255,0.2)", alignItems: "center", justifyContent: "center" },
+  trustBannerTitle: { color: "#fff", fontSize: fontSize.sm, fontFamily: font.medium },
+  trustBannerSubtitle: { color: "rgba(255,255,255,0.85)", fontSize: 11, marginTop: 1 },
+  allServicesIcon: { width: 44, height: 44, borderRadius: radius.md, alignItems: "center", justifyContent: "center", marginBottom: 2 },
   allServicesLabel: { fontSize: fontSize.sm, color: colors.onSurface, textAlign: "center", fontFamily: font.medium },
 
   nearbyHeaderRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
