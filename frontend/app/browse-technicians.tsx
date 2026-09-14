@@ -192,7 +192,7 @@ export default function BrowseTechniciansScreen() {
                 onPress={() => { techniciansApi.toggleFavorite(item.username).catch(() => {}); setFavorited((f) => ({ ...f, [item.username]: !f[item.username] })); }}
                 testID={`browse-technician-favorite-${item.username}`}
               >
-                <Ionicons name={favorited[item.username] ? "heart" : "heart-outline"} size={20} color={favorited[item.username] ? "#EF4444" : colors.onSurfaceTertiary} />
+                <Ionicons name={favorited[item.username] ? "heart" : "heart-outline"} size={20} color={favorited[item.username] ? colors.error : colors.onSurfaceTertiary} />
               </Pressable>
             </Pressable>
           )}
