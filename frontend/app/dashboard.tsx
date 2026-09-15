@@ -476,7 +476,7 @@ const styles = StyleSheet.create({
   wordmarkAccent: { color: colors.brandPrimary },
   wordmarkOnDark: { fontSize: fontSize.lg, fontFamily: font.display, color: "#fff", lineHeight: fontSize.lg + 2 },
   wordmarkAccentOnDark: { color: "#93C5FD" },
-  headerTagline: { color: "rgba(255,255,255,0.85)", fontSize: fontSize.sm, marginTop: spacing.sm },
+  headerTagline: { color: "rgba(255,255,255,0.85)", fontSize: fontSize.sm, marginTop: spacing.sm, marginLeft: 44 + 8 },
   subtitle: { fontSize: fontSize.sm, color: colors.onSurfaceSecondary, marginTop: 2 },
   roleBadge: { alignSelf: "flex-start", backgroundColor: colors.brandTertiary, borderRadius: radius.pill, paddingHorizontal: spacing.sm, paddingVertical: 2, marginTop: spacing.xs },
   roleBadgeText: { color: colors.onBrandTertiary, fontSize: fontSize.sm, fontFamily: font.medium },
