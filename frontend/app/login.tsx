@@ -146,6 +146,10 @@ export default function LoginScreen() {
           on the Home screen (no react-native-svg installed for a precise
           wave path). */}
       <LinearGradient colors={[colors.brandPrimary, "#2563EB"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.loginHeaderBanner}>
+        <View pointerEvents="none" style={styles.loginGlowTopRight} />
+        <View pointerEvents="none" style={styles.loginGlowTopLeft} />
+        <View pointerEvents="none" style={styles.loginCurveLayerOne} />
+        <View pointerEvents="none" style={styles.loginCurveLayerTwo} />
         <SafeAreaView edges={["top"]} style={styles.loginHeaderInner}>
           <Image source={require("@/assets/images/icon.png")} style={styles.loginLogo} />
           <Text style={styles.wordmarkLogin}>Deal<Text style={styles.wordmarkLoginAccent}>Lakay</Text> Alèt</Text>
@@ -272,8 +276,12 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     paddingTop: spacing.xl,
   },
-  loginHeaderBanner: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing["2xl"], alignItems: "center", borderBottomLeftRadius: 32, borderBottomRightRadius: 32 },
+  loginHeaderBanner: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing["3xl"] + spacing.xl, alignItems: "center", borderBottomLeftRadius: 40, borderBottomRightRadius: 40, position: "relative", overflow: "hidden" },
   loginHeaderInner: { alignItems: "center", width: "100%" },
+  loginGlowTopRight: { position: "absolute", top: -50, right: -40, width: 150, height: 150, borderRadius: 75, backgroundColor: "rgba(255,255,255,0.12)" },
+  loginGlowTopLeft: { position: "absolute", top: -20, left: -60, width: 140, height: 140, borderRadius: 70, backgroundColor: "rgba(255,255,255,0.08)" },
+  loginCurveLayerOne: { position: "absolute", bottom: -90, left: -70, width: 240, height: 240, borderRadius: 120, backgroundColor: "rgba(255,255,255,0.07)" },
+  loginCurveLayerTwo: { position: "absolute", bottom: -120, right: "10%", width: 280, height: 280, borderRadius: 140, backgroundColor: "rgba(167,139,250,0.16)" },
   backButton: {
     width: 36,
     height: 36,
