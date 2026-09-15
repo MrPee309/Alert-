@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
   headerBanner: { paddingHorizontal: spacing.lg, paddingBottom: spacing["2xl"], borderBottomLeftRadius: 32, borderBottomRightRadius: 32, position: "relative", overflow: "hidden" },
   glowTopRight: { position: "absolute", top: -60, right: -40, width: 160, height: 160, borderRadius: 80, backgroundColor: "rgba(255,255,255,0.12)" },
   glowBottomRight: { position: "absolute", bottom: -50, right: 30, width: 120, height: 120, borderRadius: 60, backgroundColor: "rgba(167,139,250,0.18)" },
-  headerPalmTrees: { position: "absolute", bottom: 0, left: 0, width: 180, height: 140 },
+  headerPalmTrees: { position: "absolute", bottom: 0, right: 0, width: 180, height: 140 },
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   headerText: { flex: 1 },
   greeting: { fontSize: fontSize.xl, fontFamily: font.medium, color: colors.onSurface },
