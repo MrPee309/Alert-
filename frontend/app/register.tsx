@@ -252,6 +252,7 @@ export default function RegisterScreen() {
       {/* Gradient header banner — same treatment as login.tsx, per request
           to keep Register visually consistent with Login. */}
       <LinearGradient colors={["#7C3AED", "#2563EB"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.registerHeaderBanner}>
+        <View pointerEvents="none" style={styles.registerGlow} />
         <SafeAreaView edges={["top"]} style={styles.registerHeaderInner}>
           <Image source={require("@/assets/images/icon.png")} style={styles.registerLogo} />
           <Text style={styles.wordmarkRegister}>Deal<Text style={styles.wordmarkRegisterAccent}>Lakay</Text> Alèt</Text>
@@ -451,7 +452,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: spacing.xl,
   },
-  registerHeaderBanner: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.xl, borderBottomLeftRadius: 32, borderBottomRightRadius: 32 },
+  registerHeaderBanner: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.xl, borderBottomLeftRadius: 32, borderBottomRightRadius: 32, position: "relative", overflow: "hidden" },
+  registerGlow: { position: "absolute", top: -40, right: -30, width: 110, height: 110, borderRadius: 55, backgroundColor: "rgba(255,255,255,0.1)" },
   registerHeaderInner: { alignItems: "center", width: "100%" },
   registerLogo: { width: 56, height: 56, borderRadius: radius.lg, marginBottom: spacing.xs },
   wordmarkRegister: { fontSize: fontSize.base, fontFamily: font.display, color: "#fff" },
