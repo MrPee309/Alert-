@@ -10,9 +10,11 @@ import {
   Platform,
   ActivityIndicator,
   Switch,
+  Image,
 } from "react-native";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 
 import { useAuth, GoogleNeedsLocationError } from "@/src/context/auth-context";
@@ -36,6 +38,7 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState("");
   const [phoneCountry, setPhoneCountry] = useState(PHONE_COUNTRIES[0].name);
   const [phone, setPhone] = useState("");
+  const [phoneFocused, setPhoneFocused] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [department, setDepartment] = useState("");
@@ -245,7 +248,16 @@ export default function RegisterScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.flex} edges={["top", "bottom"]}>
+    <SafeAreaView style={styles.flex} edges={["bottom"]}>
+      {/* Gradient header banner — same treatment as login.tsx, per request
+          to keep Register visually consistent with Login. */}
+      <LinearGradient colors={["#7C3AED", "#2563EB"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.registerHeaderBanner}>
+        <SafeAreaView edges={["top"]} style={styles.registerHeaderInner}>
+          <Image source={require("@/assets/images/icon.png")} style={styles.registerLogo} />
+          <Text style={styles.wordmarkRegister}>Deal<Text style={styles.wordmarkRegisterAccent}>Lakay</Text> Alèt</Text>
+        </SafeAreaView>
+      </LinearGradient>
+
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : undefined}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <Text style={styles.title}>Kreye Kont</Text>
@@ -280,9 +292,11 @@ export default function RegisterScreen() {
               </View>
             )}
             <TextInput
-              style={styles.phoneInput}
+              style={[styles.phoneInput, phoneFocused && styles.inputFocused]}
               value={phone}
               onChangeText={setPhone}
+              onFocus={() => setPhoneFocused(true)}
+              onBlur={() => setPhoneFocused(false)}
               keyboardType="phone-pad"
               placeholder={selectedPhoneCountry.digits[0] === selectedPhoneCountry.digits[1] ? `${selectedPhoneCountry.digits[0]} chif` : "nimewo w"}
               placeholderTextColor={colors.onSurfaceTertiary}
@@ -396,13 +410,16 @@ function Field(props: {
   autoCapitalize?: "none" | "sentences";
   testID?: string;
 }) {
+  const [focused, setFocused] = useState(false);
   return (
     <>
       <Text style={styles.label}>{props.label}{props.required && <Required />}</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, focused && styles.inputFocused]}
         value={props.value}
         onChangeText={props.onChangeText}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
         secureTextEntry={props.secureTextEntry}
         keyboardType={props.keyboardType}
         autoCapitalize={props.autoCapitalize}
@@ -421,7 +438,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: spacing.xl,
   },
-  scrollContent: { paddingHorizontal: spacing.xl, paddingTop: spacing["3xl"], paddingBottom: spacing["2xl"] },
+  registerHeaderBanner: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.xl, borderBottomLeftRadius: 32, borderBottomRightRadius: 32 },
+  registerHeaderInner: { alignItems: "center", width: "100%" },
+  registerLogo: { width: 56, height: 56, borderRadius: radius.lg, marginBottom: spacing.xs },
+  wordmarkRegister: { fontSize: fontSize.base, fontFamily: font.display, color: "#fff" },
+  wordmarkRegisterAccent: { color: "#93C5FD" },
+  scrollContent: { paddingHorizontal: spacing.xl, paddingTop: spacing.xl, paddingBottom: spacing["2xl"] },
   title: {
     fontSize: fontSize["2xl"],
     fontFamily: font.medium,
@@ -452,6 +474,11 @@ const styles = StyleSheet.create({
     fontSize: fontSize.base,
     color: colors.onSurface,
     backgroundColor: colors.surfaceSecondary,
+  },
+  inputFocused: {
+    borderColor: colors.brandPrimary,
+    borderWidth: 1.5,
+    backgroundColor: colors.surface,
   },
   phoneRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
   phoneCodeBadge: {
