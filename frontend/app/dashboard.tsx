@@ -144,11 +144,14 @@ export default function DashboardScreen() {
             content and never intercept touches. */}
         <View pointerEvents="none" style={styles.glowTopRight} />
         <View pointerEvents="none" style={styles.glowBottomRight} />
+        <View pointerEvents="none" style={styles.glowTopLeft} />
+        <View pointerEvents="none" style={styles.curveLayerOne} />
+        <View pointerEvents="none" style={styles.curveLayerTwo} />
         <Image
           pointerEvents="none"
           source={require("@/assets/images/palm-trees-header.png")}
           style={styles.headerPalmTrees}
-          resizeMode="contain"
+          resizeMode="cover"
         />
 
         <SafeAreaView edges={["top"]}>
@@ -480,10 +483,13 @@ const styles = StyleSheet.create({
   loadingContainer: { flex: 1, backgroundColor: colors.surfaceSecondary, alignItems: "center", justifyContent: "center" },
   scrollContent: { padding: spacing.lg, paddingBottom: spacing["3xl"] },
 
-  headerBanner: { paddingHorizontal: spacing.lg, paddingBottom: spacing["2xl"], borderBottomLeftRadius: 32, borderBottomRightRadius: 32, position: "relative", overflow: "hidden" },
+  headerBanner: { paddingHorizontal: spacing.lg, paddingBottom: spacing["2xl"], borderBottomLeftRadius: 40, borderBottomRightRadius: 40, position: "relative", overflow: "hidden" },
   glowTopRight: { position: "absolute", top: -60, right: -40, width: 160, height: 160, borderRadius: 80, backgroundColor: "rgba(255,255,255,0.12)" },
   glowBottomRight: { position: "absolute", bottom: -50, right: 30, width: 120, height: 120, borderRadius: 60, backgroundColor: "rgba(167,139,250,0.18)" },
-  headerPalmTrees: { position: "absolute", bottom: 0, right: 0, width: 180, height: 140 },
+  glowTopLeft: { position: "absolute", top: -30, left: -50, width: 130, height: 130, borderRadius: 65, backgroundColor: "rgba(255,255,255,0.08)" },
+  curveLayerOne: { position: "absolute", bottom: -70, left: -60, width: 220, height: 220, borderRadius: 110, backgroundColor: "rgba(255,255,255,0.06)" },
+  curveLayerTwo: { position: "absolute", bottom: -100, left: "20%", width: 260, height: 260, borderRadius: 130, backgroundColor: "rgba(37,99,235,0.15)" },
+  headerPalmTrees: { position: "absolute", bottom: 10, left: 0, right: 0, width: "100%", height: 120 },
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   headerText: { flex: 1 },
   greeting: { fontSize: fontSize.xl, fontFamily: font.medium, color: colors.onSurface },
