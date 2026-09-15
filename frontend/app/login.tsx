@@ -146,7 +146,7 @@ export default function LoginScreen() {
           on the Home screen (no react-native-svg installed for a precise
           wave path). */}
       <LinearGradient colors={[colors.brandPrimary, "#2563EB"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.loginHeaderBanner}>
-        <SafeAreaView edges={["top"]}>
+        <SafeAreaView edges={["top"]} style={styles.loginHeaderInner}>
           <Image source={require("@/assets/images/icon.png")} style={styles.loginLogo} />
           <Text style={styles.wordmarkLogin}>Deal<Text style={styles.wordmarkLoginAccent}>Lakay</Text> Alèt</Text>
         </SafeAreaView>
@@ -233,6 +233,12 @@ export default function LoginScreen() {
           <Pressable onPress={() => router.push("/register")} testID="login-go-register" style={styles.linkWrap}>
             <Text style={styles.link}>Pa gen kont? Kreye youn</Text>
           </Pressable>
+
+          <Image
+            source={require("@/assets/images/haiti-illustration.png")}
+            style={styles.haitiIllustration}
+            resizeMode="contain"
+          />
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -256,6 +262,7 @@ const styles = StyleSheet.create({
     paddingTop: spacing.xl,
   },
   loginHeaderBanner: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing["2xl"], alignItems: "center", borderBottomLeftRadius: 32, borderBottomRightRadius: 32 },
+  loginHeaderInner: { alignItems: "center", width: "100%" },
   backButton: {
     width: 36,
     height: 36,
@@ -362,6 +369,7 @@ const styles = StyleSheet.create({
   googleButtonPressed: { backgroundColor: colors.surfaceSecondary },
   googleButtonText: { color: colors.onSurface, fontSize: fontSize.base, fontFamily: font.medium },
   linkWrap: { paddingVertical: spacing.lg, alignItems: "center" },
+  haitiIllustration: { width: "100%", aspectRatio: 541 / 183, marginTop: spacing.md },
   link: {
     color: colors.brandPrimary,
     fontSize: fontSize.sm,
