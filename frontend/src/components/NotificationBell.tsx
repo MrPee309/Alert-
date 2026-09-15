@@ -8,14 +8,16 @@ import { colors, spacing, radius, fontSize, font, shadow } from "@/src/constants
 
 /** Top-right notification bell — reused across Akèy, Alèt, Messenger, Profil
  * headers per the current navigation structure (Notifications moved out of
- * the bottom tabs, but the Notification Center itself is unchanged). */
-/** Top-right notification bell — reused across Akèy, Alèt, Messenger, Profil
- * headers per the current navigation structure (Notifications moved out of
  * the bottom tabs, but the Notification Center itself is unchanged).
  * Optional `color` prop for screens with a dark/gradient header (defaults
  * to the existing dark onSurface color everywhere else, unchanged). */
 export function NotificationBell({ color }: { color?: string } = {}) {
   const [unread, setUnread] = useState(0);
+  // FIXED: the button's own background was hardcoded solid white, so
+  // passing color={white} for a dark/gradient header made the icon
+  // invisible against its own circle. Now the circle itself adapts too —
+  // translucent white on dark headers, solid white (unchanged) elsewhere.
+  const isOnDark = !!color;
 
   useEffect(() => {
     alertsApi
@@ -25,7 +27,12 @@ export function NotificationBell({ color }: { color?: string } = {}) {
   }, []);
 
   return (
-    <Pressable style={styles.iconButton} onPress={() => router.push("/notifications")} testID="notification-bell" hitSlop={8}>
+    <Pressable
+      style={[styles.iconButton, isOnDark && styles.iconButtonOnDark]}
+      onPress={() => router.push("/notifications")}
+      testID="notification-bell"
+      hitSlop={8}
+    >
       <Ionicons name="notifications-outline" size={22} color={color || colors.onSurface} />
       {unread > 0 && (
         <View style={styles.badge}>
@@ -45,6 +52,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     ...shadow.card,
+  },
+  iconButtonOnDark: {
+    backgroundColor: "rgba(255,255,255,0.18)",
+    shadowOpacity: 0,
+    elevation: 0,
   },
   badge: {
     position: "absolute",
