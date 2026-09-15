@@ -389,6 +389,19 @@ export default function RegisterScreen() {
           <Pressable onPress={() => router.replace("/login")} testID="register-go-login-link">
             <Text style={styles.link}>Ou gen deja yon kont? Konekte</Text>
           </Pressable>
+
+          <View style={styles.illustrationWrap}>
+            <Image
+              source={require("@/assets/images/haiti-illustration.png")}
+              style={styles.haitiIllustration}
+              resizeMode="contain"
+            />
+            <View style={styles.ayitiTextWrap}>
+              <Text style={styles.ayitiText}>Ayiti</Text>
+              <Text style={styles.ayitiText}>pi pre w !</Text>
+              <View style={styles.ayitiUnderline} />
+            </View>
+          </View>
         </View>
       </ScrollView>
       </KeyboardAvoidingView>
@@ -552,4 +565,9 @@ const styles = StyleSheet.create({
   googleButtonPressed: { backgroundColor: colors.surfaceSecondary },
   googleButtonText: { color: colors.onSurface, fontSize: fontSize.base, fontFamily: font.medium },
   link: { color: colors.brandPrimary, fontSize: fontSize.sm, textAlign: "center", marginTop: spacing.lg },
+  illustrationWrap: { position: "relative", marginTop: spacing.lg, width: "100%", overflow: "hidden", borderRadius: radius.md },
+  haitiIllustration: { width: "100%", aspectRatio: 1774 / 887, maxHeight: 160 },
+  ayitiTextWrap: { position: "absolute", top: "8%", left: "6%" },
+  ayitiText: { fontFamily: font.display, fontSize: fontSize.lg, color: colors.brandPrimary, fontStyle: "italic", lineHeight: fontSize.lg + 2 },
+  ayitiUnderline: { width: 60, height: 3, backgroundColor: colors.error, borderRadius: 2, marginTop: 4 },
 });
