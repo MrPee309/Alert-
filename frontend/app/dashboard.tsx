@@ -137,6 +137,20 @@ export default function DashboardScreen() {
           Sits OUTSIDE the padded ScrollView so it can bleed edge-to-edge;
           the search bar below overlaps its bottom edge via negative margin. */}
       <LinearGradient colors={[colors.brandPrimary, "#2563EB"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.headerBanner}>
+        {/* Decorative layers — approximating the reference spec's "soft
+            translucent glows + faded palm-tree silhouette" using plain
+            low-opacity Views/Image rather than SVG (not installed in this
+            project). Absolutely positioned so they sit BEHIND the real
+            content and never intercept touches. */}
+        <View pointerEvents="none" style={styles.glowTopRight} />
+        <View pointerEvents="none" style={styles.glowBottomRight} />
+        <Image
+          pointerEvents="none"
+          source={require("@/assets/images/palm-trees-header.png")}
+          style={styles.headerPalmTrees}
+          resizeMode="contain"
+        />
+
         <SafeAreaView edges={["top"]}>
           <View style={styles.header}>
             <View style={styles.wordmarkRow}>
@@ -466,7 +480,10 @@ const styles = StyleSheet.create({
   loadingContainer: { flex: 1, backgroundColor: colors.surfaceSecondary, alignItems: "center", justifyContent: "center" },
   scrollContent: { padding: spacing.lg, paddingBottom: spacing["3xl"] },
 
-  headerBanner: { paddingHorizontal: spacing.lg, paddingBottom: spacing["2xl"], borderBottomLeftRadius: 32, borderBottomRightRadius: 32 },
+  headerBanner: { paddingHorizontal: spacing.lg, paddingBottom: spacing["2xl"], borderBottomLeftRadius: 32, borderBottomRightRadius: 32, position: "relative", overflow: "hidden" },
+  glowTopRight: { position: "absolute", top: -60, right: -40, width: 160, height: 160, borderRadius: 80, backgroundColor: "rgba(255,255,255,0.12)" },
+  glowBottomRight: { position: "absolute", bottom: -50, right: 30, width: 120, height: 120, borderRadius: 60, backgroundColor: "rgba(167,139,250,0.18)" },
+  headerPalmTrees: { position: "absolute", bottom: 0, left: 0, width: 180, height: 140 },
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   headerText: { flex: 1 },
   greeting: { fontSize: fontSize.xl, fontFamily: font.medium, color: colors.onSurface },
