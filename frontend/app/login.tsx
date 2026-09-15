@@ -161,21 +161,25 @@ export default function LoginScreen() {
 
           <View style={styles.card}>
             <Text style={styles.label}>Imèl oswa Non Itilizatè</Text>
-            <TextInput
-              style={[styles.input, usernameFocused && styles.inputFocused]}
-              value={username}
-              onChangeText={setUsername}
-              onFocus={() => setUsernameFocused(true)}
-              onBlur={() => setUsernameFocused(false)}
-              autoCapitalize="none"
-              autoCorrect={false}
-              placeholder="egzanp: jean_dupont"
-              placeholderTextColor={colors.onSurfaceTertiary}
-              testID="login-username"
-            />
+            <View style={[styles.inputRow, usernameFocused && styles.inputFocused]}>
+              <Ionicons name="person-outline" size={18} color={colors.onSurfaceTertiary} />
+              <TextInput
+                style={styles.inputRowText}
+                value={username}
+                onChangeText={setUsername}
+                onFocus={() => setUsernameFocused(true)}
+                onBlur={() => setUsernameFocused(false)}
+                autoCapitalize="none"
+                autoCorrect={false}
+                placeholder="egzanp: jean_dupont"
+                placeholderTextColor={colors.onSurfaceTertiary}
+                testID="login-username"
+              />
+            </View>
 
             <Text style={styles.label}>Modpas</Text>
             <View style={[styles.passwordRow, passwordFocused && styles.inputFocused]}>
+              <Ionicons name="lock-closed-outline" size={18} color={colors.onSurfaceTertiary} />
               <TextInput
                 style={styles.passwordInput}
                 value={password}
@@ -314,9 +318,27 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     backgroundColor: colors.surface,
   },
+  inputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    backgroundColor: colors.surfaceSecondary,
+    marginTop: spacing.xs,
+    paddingHorizontal: spacing.md,
+  },
+  inputRowText: {
+    flex: 1,
+    paddingVertical: spacing.md,
+    fontSize: fontSize.base,
+    color: colors.onSurface,
+  },
   passwordRow: {
     flexDirection: "row",
     alignItems: "center",
+    gap: spacing.sm,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radius.md,
