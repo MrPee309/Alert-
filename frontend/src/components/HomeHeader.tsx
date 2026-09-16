@@ -8,6 +8,7 @@
  */
 import React from "react";
 import { View, Text, Pressable, Image, StyleSheet, Dimensions } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -36,6 +37,12 @@ export function HomeHeader({ greetingName }: { greetingName: string }) {
 
   return (
     <View style={{ height: headerHeight, overflow: "hidden" }}>
+      {/* FIXED: a visible flat-color seam appeared above the curved
+          gradient on Android — the default status bar background wasn't
+          transparent, so it showed as a separate solid strip instead of
+          blending into the header. Forcing it transparent lets the SVG
+          gradient paint all the way to the very top of the screen. */}
+      <StatusBar style="light" translucent backgroundColor="transparent" />
       <Svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style={StyleSheet.absoluteFillObject}>
         <Defs>
           <LinearGradient id="headerGradient" x1="0" y1="1" x2="1" y2="0">
@@ -69,10 +76,12 @@ export function HomeHeader({ greetingName }: { greetingName: string }) {
       />
 
       <SafeAreaView edges={["top"]} style={StyleSheet.absoluteFillObject}>
-        {/* LOGO — 10–13% of header height down, centered, above decorations (zIndex 10). */}
-        <View style={{ alignItems: "center", marginTop: headerHeight * 0.1, zIndex: 10 }}>
-          <Image source={require("@/assets/images/deallakay-icon.png")} style={{ width: logoWidth * 0.4, height: logoWidth * 0.4, borderRadius: radius.md }} />
-          <Text style={{ color: "#fff", fontFamily: font.display, fontSize: fontSize.base, marginTop: 4 }}>
+        {/* LOGO — moved higher within the header, cleanly stacked above
+            the wordmark (icon then text, not side-by-side), per feedback
+            that they looked too close together. */}
+        <View style={{ alignItems: "center", marginTop: headerHeight * 0.06, zIndex: 10 }}>
+          <Image source={require("@/assets/images/deallakay-icon.png")} style={{ width: logoWidth * 0.34, height: logoWidth * 0.34, borderRadius: radius.md }} />
+          <Text style={{ color: "#fff", fontFamily: font.display, fontSize: fontSize.base, marginTop: 6 }}>
             Deal<Text style={{ color: "#93C5FD" }}>Lakay</Text> Alèt
           </Text>
         </View>
@@ -82,8 +91,10 @@ export function HomeHeader({ greetingName }: { greetingName: string }) {
           <NotificationBell color="#fff" />
         </View>
 
-        {/* GREETING — 27–38% zone. */}
-        <View style={{ marginTop: headerHeight * 0.27 - headerHeight * 0.1 - logoWidth * 0.4 - 20, paddingHorizontal: spacing.lg, zIndex: 5 }}>
+        {/* GREETING — FIXED: the previous position used a fragile
+            subtraction formula that could overlap the logo/wordmark on
+            smaller screens. Now a fixed, generous gap below it instead. */}
+        <View style={{ marginTop: spacing.lg, paddingHorizontal: spacing.lg, zIndex: 5 }}>
           <Text style={{ color: "#fff", fontSize: fontSize.sm }}>Bonjou,</Text>
           <Text style={{ color: "#fff", fontSize: fontSize.xl, fontFamily: font.medium }}>{greetingName} 👋</Text>
         </View>
