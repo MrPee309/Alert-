@@ -252,7 +252,6 @@ export default function RegisterScreen() {
       {/* Gradient header banner — same treatment as login.tsx, per request
           to keep Register visually consistent with Login. */}
       <LinearGradient colors={["#7C3AED", "#2563EB"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.registerHeaderBanner}>
-        <View pointerEvents="none" style={styles.registerGlow} />
         <SafeAreaView edges={["top"]} style={styles.registerHeaderInner}>
           <Image source={require("@/assets/images/icon.png")} style={styles.registerLogo} />
           <Text style={styles.wordmarkRegister}>Deal<Text style={styles.wordmarkRegisterAccent}>Lakay</Text> Alèt</Text>
@@ -395,13 +394,8 @@ export default function RegisterScreen() {
             <Image
               source={require("@/assets/images/haiti-illustration.png")}
               style={styles.haitiIllustration}
-              resizeMode="contain"
+              resizeMode="cover"
             />
-            <View style={styles.ayitiTextWrap}>
-              <Text style={styles.ayitiText}>Ayiti</Text>
-              <Text style={styles.ayitiText}>pi pre w !</Text>
-              <View style={styles.ayitiUnderline} />
-            </View>
           </View>
         </View>
       </ScrollView>
@@ -452,8 +446,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: spacing.xl,
   },
-  registerHeaderBanner: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.xl, borderBottomLeftRadius: 32, borderBottomRightRadius: 32, position: "relative", overflow: "hidden" },
-  registerGlow: { position: "absolute", top: -40, right: -30, width: 110, height: 110, borderRadius: 55, backgroundColor: "rgba(255,255,255,0.1)" },
+  registerHeaderBanner: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.xl, borderBottomLeftRadius: 32, borderBottomRightRadius: 32 },
   registerHeaderInner: { alignItems: "center", width: "100%" },
   registerLogo: { width: 56, height: 56, borderRadius: radius.lg, marginBottom: spacing.xs },
   wordmarkRegister: { fontSize: fontSize.base, fontFamily: font.display, color: "#fff" },
@@ -567,9 +560,6 @@ const styles = StyleSheet.create({
   googleButtonPressed: { backgroundColor: colors.surfaceSecondary },
   googleButtonText: { color: colors.onSurface, fontSize: fontSize.base, fontFamily: font.medium },
   link: { color: colors.brandPrimary, fontSize: fontSize.sm, textAlign: "center", marginTop: spacing.lg },
-  illustrationWrap: { position: "relative", marginTop: spacing.lg, width: "100%", overflow: "hidden", borderRadius: radius.md },
-  haitiIllustration: { width: "100%", aspectRatio: 1774 / 887, maxHeight: 160 },
-  ayitiTextWrap: { position: "absolute", top: "8%", left: "6%" },
-  ayitiText: { fontFamily: font.display, fontSize: fontSize.lg, color: colors.brandPrimary, fontStyle: "italic", lineHeight: fontSize.lg + 2 },
-  ayitiUnderline: { width: 60, height: 3, backgroundColor: colors.error, borderRadius: 2, marginTop: 4 },
+  illustrationWrap: { width: "100%", height: 110, overflow: "hidden", borderRadius: radius.md, marginTop: spacing.lg },
+  haitiIllustration: { width: "100%", height: "100%" },
 });
