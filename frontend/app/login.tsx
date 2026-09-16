@@ -238,13 +238,8 @@ export default function LoginScreen() {
             <Image
               source={require("@/assets/images/haiti-illustration.png")}
               style={styles.haitiIllustration}
-              resizeMode="contain"
+              resizeMode="cover"
             />
-            <View style={styles.ayitiTextWrap}>
-              <Text style={styles.ayitiText}>Ayiti</Text>
-              <Text style={styles.ayitiText}>pi pre w !</Text>
-              <View style={styles.ayitiUnderline} />
-            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -395,11 +390,8 @@ const styles = StyleSheet.create({
   googleButtonPressed: { backgroundColor: colors.surfaceSecondary },
   googleButtonText: { color: colors.onSurface, fontSize: fontSize.base, fontFamily: font.medium },
   linkWrap: { paddingVertical: spacing.lg, alignItems: "center" },
-  illustrationWrap: { position: "relative", marginTop: spacing.md, width: "100%", overflow: "hidden", borderRadius: radius.md },
-  haitiIllustration: { width: "100%", aspectRatio: 1774 / 887 },
-  ayitiTextWrap: { position: "absolute", top: "8%", left: "6%" },
-  ayitiText: { fontFamily: font.display, fontSize: fontSize.lg, color: colors.brandPrimary, fontStyle: "italic", lineHeight: fontSize.lg + 2 },
-  ayitiUnderline: { width: 60, height: 3, backgroundColor: colors.error, borderRadius: 2, marginTop: 4 },
+  illustrationWrap: { width: "100%", height: 110, overflow: "hidden", borderRadius: radius.md, marginTop: spacing.md },
+  haitiIllustration: { width: "100%", height: "100%" },
   link: {
     color: colors.brandPrimary,
     fontSize: fontSize.sm,
