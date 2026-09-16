@@ -10,6 +10,7 @@ import {
   Platform,
   ActivityIndicator,
   Image,
+  Dimensions,
 } from "react-native";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -143,7 +144,7 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["bottom"]}>
-      <WaveHeader height={330}>
+      <WaveHeader height={Dimensions.get("window").height * 0.65}>
         <SafeAreaView edges={["top"]} style={styles.loginHeaderInner}>
           <Image source={require("@/assets/images/icon.png")} style={styles.loginLogo} />
           <Text style={styles.wordmarkLogin}>Deal<Text style={styles.wordmarkLoginAccent}>Lakay</Text> Alèt</Text>
@@ -282,7 +283,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   header: { alignItems: "center", marginBottom: spacing.xl },
-  loginLogo: { width: 124, height: 124, borderRadius: 30, marginBottom: spacing.sm },
+  loginLogo: { width: 90, height: 90, borderRadius: 22, marginBottom: spacing.xs },
   wordmarkLogin: { fontSize: 24, fontFamily: font.display, color: "#fff", textAlign: "center" },
   wordmarkLoginAccent: { color: "#93C5FD" },
   title: {
