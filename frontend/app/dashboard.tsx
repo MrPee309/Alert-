@@ -136,7 +136,7 @@ export default function DashboardScreen() {
           project; adding it would need a new native dependency + rebuild).
           Sits OUTSIDE the padded ScrollView so it can bleed edge-to-edge;
           the search bar below overlaps its bottom edge via negative margin. */}
-      <HomeHeader greetingName={user?.fullName?.split(" ")[0] || "zanmi"} />
+      <HomeHeader />
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -151,7 +151,33 @@ export default function DashboardScreen() {
             demand entry point in its own header (not on Home). */}
         {isClient ? (
           <>
-            <Text style={styles.hubQuestion}>Kisa ou vle fè jodi a?</Text>
+            <Text style={{ fontSize: 27, fontFamily: font.medium, color: "#111B5E" }}>
+              Bonjou, {user?.fullName?.split(" ")[0] || "zanmi"} 👋
+            </Text>
+            <Text style={{ fontSize: 18, color: "#27316F", marginTop: 4, marginBottom: spacing.md }}>Kisa ou vle fè jodi a ?</Text>
+
+            <View style={{ flexDirection: "row", gap: spacing.sm, marginBottom: spacing.lg }}>
+              <Pressable style={{ flex: 1.15, borderRadius: 20 }} onPress={() => router.push("/search-results")} testID="dashboard-quick-search">
+                <LinearGradient colors={["#2563EB", "#7C3AED"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ borderRadius: 20, padding: spacing.md, minHeight: 108, justifyContent: "space-between" }}>
+                  <Ionicons name="search" size={22} color="#fff" />
+                  <View>
+                    <Text style={{ color: "#fff", fontFamily: font.medium, fontSize: fontSize.base }}>Chèche</Text>
+                    <Text style={{ color: "rgba(255,255,255,0.85)", fontSize: 11 }}>Sèvis, pwodwi, plis...</Text>
+                  </View>
+                </LinearGradient>
+              </Pressable>
+              <Pressable
+                style={{ flex: 1, backgroundColor: "#fff", borderRadius: 20, padding: spacing.md, minHeight: 108, justifyContent: "space-between", borderWidth: 1, borderColor: "#EEF0FA" }}
+                onPress={() => router.push("/make-a-demand")}
+                testID="dashboard-quick-demand"
+              >
+                <Ionicons name="megaphone-outline" size={22} color={colors.brandPrimary} />
+                <View>
+                  <Text style={{ color: "#111B5E", fontFamily: font.medium, fontSize: fontSize.base }}>Fè yon Demand</Text>
+                  <Text style={{ color: colors.onSurfaceSecondary, fontSize: 11 }}>Poste bezwen w</Text>
+                </View>
+              </Pressable>
+            </View>
 
             <Text style={styles.sectionTitle}>Tout sèvis</Text>
             {/* FIXED: flexWrap+justifyContent on one container didn't
