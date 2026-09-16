@@ -137,7 +137,7 @@ export default function DashboardScreen() {
           project; adding it would need a new native dependency + rebuild).
           Sits OUTSIDE the padded ScrollView so it can bleed edge-to-edge;
           the search bar below overlaps its bottom edge via negative margin. */}
-      <WaveHeader height={210}>
+      <WaveHeader height={165}>
         <Image
           pointerEvents="none"
           source={require("@/assets/images/palm-trees-header.png")}
@@ -491,7 +491,7 @@ const styles = StyleSheet.create({
   roleBadge: { alignSelf: "flex-start", backgroundColor: colors.brandTertiary, borderRadius: radius.pill, paddingHorizontal: spacing.sm, paddingVertical: 2, marginTop: spacing.xs },
   roleBadgeText: { color: colors.onBrandTertiary, fontSize: fontSize.sm, fontFamily: font.medium },
 
-  searchBar: { flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: colors.surface, borderRadius: radius.lg, paddingHorizontal: spacing.md, paddingVertical: spacing.md, marginTop: -spacing.sm, marginBottom: spacing.sm, ...shadow.raised },
+  searchBar: { flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: colors.surface, borderRadius: radius.lg, paddingHorizontal: spacing.md, paddingVertical: spacing.md, marginTop: spacing.sm, marginBottom: spacing.sm, ...shadow.raised },
   searchBarText: { color: colors.onSurfaceTertiary, fontSize: fontSize.sm },
 
   hubQuestion: { fontSize: fontSize.lg, fontFamily: font.medium, color: colors.onSurface, marginTop: spacing.xl, marginBottom: spacing.md },
