@@ -396,7 +396,7 @@ const styles = StyleSheet.create({
   googleButtonText: { color: colors.onSurface, fontSize: fontSize.base, fontFamily: font.medium },
   linkWrap: { paddingVertical: spacing.lg, alignItems: "center" },
   illustrationWrap: { position: "relative", marginTop: spacing.md, width: "100%", overflow: "hidden", borderRadius: radius.md },
-  haitiIllustration: { width: "100%", aspectRatio: 1774 / 887, maxHeight: 160 },
+  haitiIllustration: { width: "100%", aspectRatio: 1774 / 887 },
   ayitiTextWrap: { position: "absolute", top: "8%", left: "6%" },
   ayitiText: { fontFamily: font.display, fontSize: fontSize.lg, color: colors.brandPrimary, fontStyle: "italic", lineHeight: fontSize.lg + 2 },
   ayitiUnderline: { width: 60, height: 3, backgroundColor: colors.error, borderRadius: 2, marginTop: 4 },
