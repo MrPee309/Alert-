@@ -143,7 +143,7 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["bottom"]}>
-      <WaveHeader height={280}>
+      <WaveHeader height={330}>
         <SafeAreaView edges={["top"]} style={styles.loginHeaderInner}>
           <Image source={require("@/assets/images/icon.png")} style={styles.loginLogo} />
           <Text style={styles.wordmarkLogin}>Deal<Text style={styles.wordmarkLoginAccent}>Lakay</Text> Alèt</Text>
@@ -282,8 +282,8 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   header: { alignItems: "center", marginBottom: spacing.xl },
-  loginLogo: { width: 48, height: 48, borderRadius: radius.md, marginBottom: spacing.xs },
-  wordmarkLogin: { fontSize: fontSize.lg, fontFamily: font.display, color: "#fff" },
+  loginLogo: { width: 124, height: 124, borderRadius: 30, marginBottom: spacing.sm },
+  wordmarkLogin: { fontSize: 24, fontFamily: font.display, color: "#fff", textAlign: "center" },
   wordmarkLoginAccent: { color: "#93C5FD" },
   title: {
     fontSize: fontSize["2xl"],
