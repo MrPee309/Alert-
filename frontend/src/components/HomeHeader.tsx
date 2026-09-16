@@ -15,7 +15,7 @@ import Svg, { Defs, LinearGradient, Stop, Rect, Path } from "react-native-svg";
 import { NotificationBell } from "@/src/components/NotificationBell";
 import { font } from "@/src/constants/theme";
 
-const HOME_HEADER_RATIO = 0.28;
+const HOME_HEADER_RATIO = 0.24;
 const COLORS = {
   deepBlue: "#1D4ED8",
   blue: "#2563EB",
@@ -82,7 +82,7 @@ export function HomeHeader() {
             position: "absolute",
             left: hPad,
             right: hPad,
-            top: insets.top + 100,
+            top: insets.top + 76,
             height: 64,
             backgroundColor: "#fff",
             borderRadius: 32,
