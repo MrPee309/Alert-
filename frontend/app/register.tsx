@@ -11,10 +11,11 @@ import {
   ActivityIndicator,
   Switch,
   Image,
+  Dimensions,
 } from "react-native";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
+import { WaveHeader } from "@/src/components/WaveHeader";
 import { Ionicons } from "@expo/vector-icons";
 
 import { useAuth, GoogleNeedsLocationError } from "@/src/context/auth-context";
@@ -249,17 +250,16 @@ export default function RegisterScreen() {
 
   return (
     <SafeAreaView style={styles.flex} edges={["bottom"]}>
-      {/* Gradient header banner — same treatment as login.tsx, per request
-          to keep Register visually consistent with Login. */}
-      <LinearGradient colors={["#7C3AED", "#2563EB"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.registerHeaderBanner}>
-        <SafeAreaView edges={["top"]} style={styles.registerHeaderInner}>
-          <Image source={require("@/assets/images/icon.png")} style={styles.registerLogo} />
-          <Text style={styles.wordmarkRegister}>Deal<Text style={styles.wordmarkRegisterAccent}>Lakay</Text> Alèt</Text>
-        </SafeAreaView>
-      </LinearGradient>
+      {/* Same WaveHeader + logo-outside-header treatment as login.tsx —
+          kept visually identical per request. */}
+      <WaveHeader height={Dimensions.get("window").height * 0.09} />
 
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : undefined}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
+          <View style={styles.registerHeaderText}>
+            <Image source={require("@/assets/images/icon.png")} style={styles.registerLogo} />
+            <Text style={styles.wordmarkRegister}>Deal<Text style={styles.wordmarkRegisterAccent}>Lakay</Text> Alèt</Text>
+          </View>
           <Text style={styles.title}>Kreye Kont</Text>
           <Text style={styles.tagline}>{t("common.tagline")}</Text>
 
@@ -394,8 +394,13 @@ export default function RegisterScreen() {
             <Image
               source={require("@/assets/images/haiti-illustration.png")}
               style={styles.haitiIllustration}
-              resizeMode="cover"
+              resizeMode="contain"
             />
+            <View style={styles.ayitiTextWrap}>
+              <Text style={styles.ayitiText}>Ayiti</Text>
+              <Text style={styles.ayitiText}>pi pre w !</Text>
+              <View style={styles.ayitiUnderline} />
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -446,11 +451,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: spacing.xl,
   },
-  registerHeaderBanner: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.xl, borderBottomLeftRadius: 32, borderBottomRightRadius: 32 },
-  registerHeaderInner: { alignItems: "center", width: "100%" },
+  registerHeaderText: { alignItems: "center", width: "100%", marginTop: spacing.xs, marginBottom: spacing.sm },
   registerLogo: { width: 56, height: 56, borderRadius: radius.lg, marginBottom: spacing.xs },
-  wordmarkRegister: { fontSize: fontSize.base, fontFamily: font.display, color: "#fff" },
-  wordmarkRegisterAccent: { color: "#93C5FD" },
+  wordmarkRegister: { fontSize: fontSize.base, fontFamily: font.display, color: colors.onSurface },
+  wordmarkRegisterAccent: { color: colors.brandPrimary },
   scrollContent: { paddingHorizontal: spacing.xl, paddingTop: spacing.xl, paddingBottom: spacing["2xl"] },
   title: {
     fontSize: fontSize["2xl"],
@@ -560,6 +564,9 @@ const styles = StyleSheet.create({
   googleButtonPressed: { backgroundColor: colors.surfaceSecondary },
   googleButtonText: { color: colors.onSurface, fontSize: fontSize.base, fontFamily: font.medium },
   link: { color: colors.brandPrimary, fontSize: fontSize.sm, textAlign: "center", marginTop: spacing.lg },
-  illustrationWrap: { width: "100%", height: 110, overflow: "hidden", borderRadius: radius.md, marginTop: spacing.lg },
-  haitiIllustration: { width: "100%", height: "100%" },
+  illustrationWrap: { width: "100%", overflow: "hidden", marginTop: spacing.xs, position: "relative" },
+  haitiIllustration: { width: "100%", aspectRatio: 1774 / 887 },
+  ayitiTextWrap: { position: "absolute", top: "6%", left: "5%" },
+  ayitiText: { fontFamily: font.display, fontSize: fontSize.base, color: colors.brandPrimary, fontStyle: "italic", lineHeight: fontSize.base + 2 },
+  ayitiUnderline: { width: 44, height: 2, backgroundColor: colors.error, borderRadius: 2, marginTop: 3 },
 });
