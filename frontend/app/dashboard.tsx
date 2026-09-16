@@ -129,7 +129,7 @@ export default function DashboardScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top"]}>
+    <SafeAreaView style={styles.safeArea} edges={[]}>
       {/* Gradient header banner — approximates the reference mockup's
           blue "wave" header using a rounded-bottom LinearGradient rather
           than an SVG wave path (react-native-svg isn't installed in this
