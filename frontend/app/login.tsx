@@ -144,16 +144,13 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["bottom"]}>
-      <WaveHeader height={Dimensions.get("window").height * 0.65}>
-        <SafeAreaView edges={["top"]} style={styles.loginHeaderInner}>
-          <Image source={require("@/assets/images/icon.png")} style={styles.loginLogo} />
-          <Text style={styles.wordmarkLogin}>Deal<Text style={styles.wordmarkLoginAccent}>Lakay</Text> Alèt</Text>
-        </SafeAreaView>
-      </WaveHeader>
+      <WaveHeader height={Dimensions.get("window").height * 0.07} />
 
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : undefined}>
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
           <View style={styles.header}>
+            <Image source={require("@/assets/images/icon.png")} style={styles.loginLogo} />
+            <Text style={styles.wordmarkLogin}>Deal<Text style={styles.wordmarkLoginAccent}>Lakay</Text> Alèt</Text>
             <Text style={styles.title}>Konekte</Text>
             <Text style={styles.subtitle}>Byenvini tounen 👋</Text>
           </View>
@@ -283,9 +280,9 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   header: { alignItems: "center", marginBottom: spacing.xl },
-  loginLogo: { width: 90, height: 90, borderRadius: 22, marginBottom: spacing.xs },
-  wordmarkLogin: { fontSize: 24, fontFamily: font.display, color: "#fff", textAlign: "center" },
-  wordmarkLoginAccent: { color: "#93C5FD" },
+  loginLogo: { width: 72, height: 72, borderRadius: 20, marginBottom: spacing.xs },
+  wordmarkLogin: { fontSize: 22, fontFamily: font.display, color: colors.onSurface, textAlign: "center", marginBottom: spacing.md },
+  wordmarkLoginAccent: { color: colors.brandPrimary },
   title: {
     fontSize: fontSize["2xl"],
     fontFamily: font.medium,
