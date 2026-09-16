@@ -1,49 +1,34 @@
 /**
- * Shared diagonal-wave gradient header background, used by both the Home
- * (dashboard.tsx) and Login/Register screens so the "wave" shape stays
- * pixel-identical everywhere it's used instead of being redrawn per screen.
- * Uses react-native-svg (added specifically for this — the earlier
- * rounded-bottom-corner LinearGradient was an approximation while that
- * dependency wasn't installed yet).
+ * Shared diagonal-wave gradient header background (Login/Register only —
+ * Home now uses its own HomeHeader.tsx with the fuller spec). Updated to
+ * the exact 3-stop gradient and exact wave path from the reference spec,
+ * replacing the earlier safer approximation.
  */
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import Svg, { Path, Defs, LinearGradient as SvgLinearGradient, Stop } from "react-native-svg";
+import Svg, { Path, Defs, LinearGradient as SvgLinearGradient, Stop, Rect } from "react-native-svg";
 
 export function WaveHeader({
   height,
   children,
 }: {
-  /** Total height of the header, including the wave's tallest point. */
   height: number;
   children?: React.ReactNode;
 }) {
-  const W = 400; // viewBox width — scales to any real screen width via preserveAspectRatio "none"
-  const H = 100; // viewBox height, mapped to the real `height` prop
   return (
     <View style={{ height, overflow: "hidden" }}>
-      <Svg
-        width="100%"
-        height="100%"
-        viewBox={`0 0 ${W} ${H}`}
-        preserveAspectRatio="none"
-        style={StyleSheet.absoluteFillObject}
-      >
+      <Svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style={StyleSheet.absoluteFillObject}>
         <Defs>
-          <SvgLinearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="1">
-            <Stop offset="0" stopColor="#7C3AED" />
-            <Stop offset="1" stopColor="#2563EB" />
+          <SvgLinearGradient id="waveGradient" x1="0" y1="1" x2="1" y2="0">
+            <Stop offset="0%" stopColor="#1D4ED8" />
+            <Stop offset="45%" stopColor="#2563EB" />
+            <Stop offset="100%" stopColor="#7C3AED" />
           </SvgLinearGradient>
         </Defs>
-        {/* Diagonal wave — FIXED: the previous curve dipped down to ~55%
-            height at its lowest point, which put header content (logo,
-            wordmark, tagline) outside the painted area whenever it grew
-            past that point, showing on the plain white background behind
-            it instead of the gradient. The wave now never dips below 78%
-            height, keeping the whole top content zone solidly covered. */}
+        <Rect x="0" y="0" width="100" height="100" fill="url(#waveGradient)" />
         <Path
-          d={`M0,${H * 0.86} C ${W * 0.22},${H * 0.96} ${W * 0.38},${H * 0.8} ${W * 0.58},${H * 0.83} C ${W * 0.78},${H * 0.86} ${W * 0.88},${H * 0.98} ${W},${H * 0.9} L${W},0 L0,0 Z`}
-          fill="url(#waveGradient)"
+          d="M 0 77 C 15 82, 27 91, 42 90 C 58 89, 69 76, 81 70 C 89 66, 95 68, 100 72 L 100 100 L 0 100 Z"
+          fill="#FFFFFF"
         />
       </Svg>
       <View style={StyleSheet.absoluteFillObject}>{children}</View>
