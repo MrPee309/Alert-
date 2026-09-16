@@ -58,7 +58,7 @@ export function HomeHeader() {
         pointerEvents="none"
         source={require("@/assets/images/palm-trees-header.png")}
         resizeMode="contain"
-        style={{ position: "absolute", right: screenWidth * 0.02, bottom: headerHeight * 0.05, width: palmWidth, height: headerHeight * 0.18, opacity: 0.22, tintColor: COLORS.silhouette }}
+        style={{ position: "absolute", right: screenWidth * 0.02, bottom: headerHeight * 0.05, width: palmWidth, height: headerHeight * 0.18, opacity: 0.13, tintColor: COLORS.silhouette }}
       />
 
       <SafeAreaView edges={["top"]} style={StyleSheet.absoluteFillObject}>
