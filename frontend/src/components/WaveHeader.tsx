@@ -21,7 +21,7 @@ export function WaveHeader({
   const W = 400; // viewBox width — scales to any real screen width via preserveAspectRatio "none"
   const H = 100; // viewBox height, mapped to the real `height` prop
   return (
-    <View style={{ height }}>
+    <View style={{ height, overflow: "hidden" }}>
       <Svg
         width="100%"
         height="100%"
@@ -35,10 +35,14 @@ export function WaveHeader({
             <Stop offset="1" stopColor="#2563EB" />
           </SvgLinearGradient>
         </Defs>
-        {/* Diagonal wave: taller on the right, dips down-left, matching the
-            reference mockup's "upper-right to lower-left" curve. */}
+        {/* Diagonal wave — FIXED: the previous curve dipped down to ~55%
+            height at its lowest point, which put header content (logo,
+            wordmark, tagline) outside the painted area whenever it grew
+            past that point, showing on the plain white background behind
+            it instead of the gradient. The wave now never dips below 78%
+            height, keeping the whole top content zone solidly covered. */}
         <Path
-          d={`M0,${H * 0.62} C ${W * 0.22},${H * 0.8} ${W * 0.38},${H * 0.55} ${W * 0.58},${H * 0.6} C ${W * 0.78},${H * 0.65} ${W * 0.88},${H * 0.92} ${W},${H * 0.8} L${W},0 L0,0 Z`}
+          d={`M0,${H * 0.86} C ${W * 0.22},${H * 0.96} ${W * 0.38},${H * 0.8} ${W * 0.58},${H * 0.83} C ${W * 0.78},${H * 0.86} ${W * 0.88},${H * 0.98} ${W},${H * 0.9} L${W},0 L0,0 Z`}
           fill="url(#waveGradient)"
         />
       </Svg>
