@@ -24,8 +24,7 @@ import { WEBSITE_URL } from "@/src/constants/config";
 import type { AppNotification } from "@/src/types";
 import { colors, spacing, radius, fontSize, font, shadow } from "@/src/constants/theme";
 import { BottomNav } from "@/src/components/BottomNav";
-import { NotificationBell } from "@/src/components/NotificationBell";
-import { WaveHeader } from "@/src/components/WaveHeader";
+import { HomeHeader } from "@/src/components/HomeHeader";
 
 function timeAgo(iso: string): string {
   const diffMs = Date.now() - new Date(iso).getTime();
@@ -137,45 +136,12 @@ export default function DashboardScreen() {
           project; adding it would need a new native dependency + rebuild).
           Sits OUTSIDE the padded ScrollView so it can bleed edge-to-edge;
           the search bar below overlaps its bottom edge via negative margin. */}
-      <WaveHeader height={165}>
-        <Image
-          pointerEvents="none"
-          source={require("@/assets/images/palm-trees-header.png")}
-          style={styles.headerPalmTrees}
-          resizeMode="contain"
-        />
-
-        <SafeAreaView edges={["top"]}>
-          <View style={styles.header}>
-            <View style={styles.wordmarkRow}>
-              <Image source={require("@/assets/images/deallakay-icon.png")} style={styles.logoIcon} />
-              <View>
-                <Text style={styles.wordmarkOnDark}>Deal<Text style={styles.wordmarkAccentOnDark}>Lakay</Text></Text>
-                <Text style={styles.wordmarkOnDark}>Alèt</Text>
-              </View>
-            </View>
-            <NotificationBell color={colors.onBrandPrimary} />
-          </View>
-          <Text style={styles.headerTagline}>Enfòmasyon ki itil, opòtinite ki pi pre w!</Text>
-        </SafeAreaView>
-      </WaveHeader>
+      <HomeHeader greetingName={user?.fullName?.split(" ")[0] || "zanmi"} />
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor={colors.brandPrimary} />}
       >
-        {/* Universal search — Phase 2: searches products AND technicians
-            together in one place, rather than the earlier version which
-            only opened product browsing. Sits with a negative top margin
-            so it visually overlaps the gradient banner's bottom edge. */}
-        <Pressable
-          style={styles.searchBar}
-          onPress={() => router.push("/search-results")}
-          testID="dashboard-search-bar"
-        >
-          <Ionicons name="search" size={18} color={colors.onSurfaceTertiary} />
-          <Text style={styles.searchBarText}>Chèche pwodwi, sèvis, teknisyen...</Text>
-        </Pressable>
 
         {/* Home matches the approved reference exactly: greeting → 2 quick
             actions (Chèche / Fè yon Demand) → "Tout Sèvis" (5 simple cards,
@@ -185,28 +151,7 @@ export default function DashboardScreen() {
             demand entry point in its own header (not on Home). */}
         {isClient ? (
           <>
-            <Text style={styles.greeting}>Bonjou, {user?.fullName?.split(" ")[0] || "zanmi"} 👋</Text>
             <Text style={styles.hubQuestion}>Kisa ou vle fè jodi a?</Text>
-            <View style={styles.quickActionRow}>
-              <Pressable style={styles.quickActionCardWrap} onPress={() => router.push("/search-results")} testID="dashboard-quick-search">
-                <LinearGradient colors={[colors.brandPrimary, "#4338CA"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.quickActionPrimary}>
-                  <Ionicons name="search" size={20} color={colors.onBrandPrimary} />
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.quickActionPrimaryText}>Chèche</Text>
-                    <Text style={styles.quickActionPrimarySubtext}>Sèvis, pwodwi, plis...</Text>
-                  </View>
-                  <Ionicons name="chevron-forward" size={18} color="rgba(255,255,255,0.85)" />
-                </LinearGradient>
-              </Pressable>
-              <Pressable style={styles.quickActionSecondary} onPress={() => router.push("/make-a-demand")} testID="dashboard-quick-demand">
-                <Ionicons name="megaphone-outline" size={20} color={colors.onSurface} />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.quickActionSecondaryText}>Fè yon Demand</Text>
-                  <Text style={styles.quickActionSecondarySubtext}>Poste bezwen w</Text>
-                </View>
-                <Ionicons name="chevron-forward" size={16} color={colors.onSurfaceTertiary} />
-              </Pressable>
-            </View>
 
             <Text style={styles.sectionTitle}>Tout sèvis</Text>
             {/* FIXED: flexWrap+justifyContent on one container didn't
