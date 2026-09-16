@@ -25,6 +25,7 @@ import type { AppNotification } from "@/src/types";
 import { colors, spacing, radius, fontSize, font, shadow } from "@/src/constants/theme";
 import { BottomNav } from "@/src/components/BottomNav";
 import { NotificationBell } from "@/src/components/NotificationBell";
+import { WaveHeader } from "@/src/components/WaveHeader";
 
 function timeAgo(iso: string): string {
   const diffMs = Date.now() - new Date(iso).getTime();
@@ -136,22 +137,12 @@ export default function DashboardScreen() {
           project; adding it would need a new native dependency + rebuild).
           Sits OUTSIDE the padded ScrollView so it can bleed edge-to-edge;
           the search bar below overlaps its bottom edge via negative margin. */}
-      <LinearGradient colors={[colors.brandPrimary, "#2563EB"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.headerBanner}>
-        {/* Decorative layers — approximating the reference spec's "soft
-            translucent glows + faded palm-tree silhouette" using plain
-            low-opacity Views/Image rather than SVG (not installed in this
-            project). Absolutely positioned so they sit BEHIND the real
-            content and never intercept touches. */}
-        <View pointerEvents="none" style={styles.glowTopRight} />
-        <View pointerEvents="none" style={styles.glowBottomRight} />
-        <View pointerEvents="none" style={styles.glowTopLeft} />
-        <View pointerEvents="none" style={styles.curveLayerOne} />
-        <View pointerEvents="none" style={styles.curveLayerTwo} />
+      <WaveHeader height={210}>
         <Image
           pointerEvents="none"
           source={require("@/assets/images/palm-trees-header.png")}
           style={styles.headerPalmTrees}
-          resizeMode="cover"
+          resizeMode="contain"
         />
 
         <SafeAreaView edges={["top"]}>
@@ -167,7 +158,7 @@ export default function DashboardScreen() {
           </View>
           <Text style={styles.headerTagline}>Enfòmasyon ki itil, opòtinite ki pi pre w!</Text>
         </SafeAreaView>
-      </LinearGradient>
+      </WaveHeader>
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -483,13 +474,9 @@ const styles = StyleSheet.create({
   loadingContainer: { flex: 1, backgroundColor: colors.surfaceSecondary, alignItems: "center", justifyContent: "center" },
   scrollContent: { padding: spacing.lg, paddingBottom: spacing["3xl"] },
 
-  headerBanner: { paddingHorizontal: spacing.lg, paddingBottom: spacing["2xl"], borderBottomLeftRadius: 40, borderBottomRightRadius: 40, position: "relative", overflow: "hidden" },
-  glowTopRight: { position: "absolute", top: -60, right: -40, width: 160, height: 160, borderRadius: 80, backgroundColor: "rgba(255,255,255,0.12)" },
-  glowBottomRight: { position: "absolute", bottom: -50, right: 30, width: 120, height: 120, borderRadius: 60, backgroundColor: "rgba(167,139,250,0.18)" },
-  glowTopLeft: { position: "absolute", top: -30, left: -50, width: 130, height: 130, borderRadius: 65, backgroundColor: "rgba(255,255,255,0.08)" },
-  curveLayerOne: { position: "absolute", bottom: -70, left: -60, width: 220, height: 220, borderRadius: 110, backgroundColor: "rgba(255,255,255,0.06)" },
-  curveLayerTwo: { position: "absolute", bottom: -100, left: "20%", width: 260, height: 260, borderRadius: 130, backgroundColor: "rgba(37,99,235,0.15)" },
-  headerPalmTrees: { position: "absolute", bottom: 10, left: 0, right: 0, width: "100%", height: 120 },
+  headerBanner: { paddingHorizontal: spacing.lg, paddingBottom: spacing.md, borderBottomLeftRadius: 24, borderBottomRightRadius: 24, position: "relative", overflow: "hidden" },
+  glowTopRight: { position: "absolute", top: -60, right: -40, width: 160, height: 160, borderRadius: 80, backgroundColor: "rgba(255,255,255,0.08)" },
+  headerPalmTrees: { position: "absolute", bottom: 0, right: 0, width: 170, height: 130 },
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   headerText: { flex: 1 },
   greeting: { fontSize: fontSize.xl, fontFamily: font.medium, color: colors.onSurface },
@@ -504,7 +491,7 @@ const styles = StyleSheet.create({
   roleBadge: { alignSelf: "flex-start", backgroundColor: colors.brandTertiary, borderRadius: radius.pill, paddingHorizontal: spacing.sm, paddingVertical: 2, marginTop: spacing.xs },
   roleBadgeText: { color: colors.onBrandTertiary, fontSize: fontSize.sm, fontFamily: font.medium },
 
-  searchBar: { flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: colors.surface, borderRadius: radius.lg, paddingHorizontal: spacing.md, paddingVertical: spacing.md, marginTop: -spacing["2xl"], marginBottom: spacing.sm, ...shadow.raised },
+  searchBar: { flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: colors.surface, borderRadius: radius.lg, paddingHorizontal: spacing.md, paddingVertical: spacing.md, marginTop: -spacing.sm, marginBottom: spacing.sm, ...shadow.raised },
   searchBarText: { color: colors.onSurfaceTertiary, fontSize: fontSize.sm },
 
   hubQuestion: { fontSize: fontSize.lg, fontFamily: font.medium, color: colors.onSurface, marginTop: spacing.xl, marginBottom: spacing.md },
