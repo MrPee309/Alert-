@@ -1,16 +1,16 @@
 {
   "expo": {
     "name": "DealLakay Alert",
-    "slug": "frontend",
+    "slug": "deallakay-alet",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "frontend",
+    "scheme": "deallakayalet",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.emergent.alertmvp.dt882e",
+      "bundleIdentifier": "com.deallakay.alet",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "DealLakay bezwen lokalizasyon ou pou moun ka jwenn ou lè w disponib kòm Chofè Moto."
       }
@@ -21,7 +21,7 @@
         "backgroundColor": "#000000"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.emergent.alertmvp.dt882e"
+      "package": "com.deallakay.alet"
     },
     "web": {
       "bundler": "metro",
