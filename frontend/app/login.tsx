@@ -16,6 +16,7 @@ import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { WaveHeader } from "@/src/components/WaveHeader";
+import { HaitiFooterSVG } from "@/src/components/HaitiFooterSVG";
 import { Ionicons } from "@expo/vector-icons";
 
 import { useAuth, GoogleNeedsLocationError } from "@/src/context/auth-context";
@@ -235,11 +236,7 @@ export default function LoginScreen() {
           </Pressable>
 
           <View style={styles.illustrationWrap}>
-            <Image
-              source={require("@/assets/images/haiti-illustration.png")}
-              style={styles.haitiIllustration}
-              resizeMode="contain"
-            />
+            <HaitiFooterSVG />
             <View style={styles.ayitiTextWrap}>
               <Text style={styles.ayitiText}>Ayiti</Text>
               <Text style={styles.ayitiText}>pi pre w !</Text>
