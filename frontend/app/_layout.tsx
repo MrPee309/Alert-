@@ -103,6 +103,7 @@ function RootNavigator() {
         <Stack.Screen name="profile" />
         <Stack.Screen name="alerts-hub" />
         <Stack.Screen name="discover-alerts" />
+        <Stack.Screen name="browse-demands" />
         <Stack.Screen name="personal-info" />
         <Stack.Screen name="security" />
         <Stack.Screen name="help-support" />

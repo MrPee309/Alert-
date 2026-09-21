@@ -269,6 +269,14 @@ export default function DashboardScreen() {
               ...(role === "TECHNICIAN" || role === "TECHNICIAN_SELLER" ? [
                 { icon: "construct", label: "Sèvis Mwen", onPress: () => WEBSITE_URL && Linking.openURL(`${WEBSITE_URL}/technician-dashboard`) },
               ] : []),
+              // New — previously only clients could reach delivery
+              // requests; sellers and technicians need this too (in case
+              // they need a delivery for themselves). "Demann Kliyan" was
+              // considered here too, but the new "Dènye Demand" preview
+              // section below already covers that need more usefully (an
+              // actual list, not just a link) — a separate button to the
+              // same screen would just be a redundant second path there.
+              { icon: "bicycle", label: "Transpò & Livrezon", onPress: () => router.push("/transport-category") },
               { icon: "chatbubbles", label: "Messenger", onPress: () => router.push("/messenger") },
             ]).map((a, i) => (
               <Pressable key={i} style={styles.quickGridItem} onPress={a.onPress} testID={`dashboard-quick-${i}`}>
@@ -363,6 +371,41 @@ export default function DashboardScreen() {
             <Text style={styles.websiteBridgeText}>Jere Sèvis Ou sou Sit DealLakay la</Text>
             <Ionicons name="open-outline" size={16} color={colors.onSurfaceTertiary} />
           </Pressable>
+        )}
+
+        {/* New — sellers and technicians previously had no visible way to
+            see client demands from Home itself (only a count elsewhere,
+            or a link that navigated away). A short preview list, right on
+            the dashboard, makes new demands easy to notice at a glance. */}
+        {(role === "SELLER" || role === "TECHNICIAN" || role === "TECHNICIAN_SELLER") && (
+          <>
+            <View style={styles.sectionHeaderRow}>
+              <Text style={styles.sectionTitle}>Dènye Demand</Text>
+              <Pressable onPress={() => router.push("/browse-demands")} testID="dashboard-see-all-demands">
+                <Text style={styles.sectionLink}>Wè tout</Text>
+              </Pressable>
+            </View>
+            {availableDemands.length === 0 ? (
+              <EmptyState icon="megaphone-outline" title="Pa gen demand ankò." subtitle="Ou ap wè demand kliyan yo isit la." />
+            ) : (
+              availableDemands.slice(0, 3).map((d) => (
+                <Pressable
+                  key={d.id}
+                  style={styles.alertCard}
+                  onPress={() => router.push(`/alert-details?id=${d.id}`)}
+                  testID={`dashboard-demand-${d.id}`}
+                >
+                  <View style={styles.alertIconWrap}>
+                    <Ionicons name="megaphone" size={18} color={colors.brandPrimary} />
+                  </View>
+                  <View style={styles.alertCardBody}>
+                    <Text style={styles.alertCardTitle}>{d.keyword || d.category || "Demand"}</Text>
+                    <Text style={styles.alertCardMeta}>{d.city || d.department || ""} • {timeAgo(d.created_at)}</Text>
+                  </View>
+                </Pressable>
+              ))
+            )}
+          </>
         )}
         {isSupplier && (
           <Pressable
